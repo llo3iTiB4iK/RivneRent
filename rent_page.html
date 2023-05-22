@@ -26,8 +26,6 @@
 				<input type="text" name="address">
 				<label for="tel">Номер телефону:</label>
 				<input type="text" value="+380" name="tel" maxlength="13" readonly>
-				<button onclick="gener_number()">Згенерувати номер</button>
-
 				<label for="list">Оберіть авто, яке бажаєте орендувати:</label>
 				<select name="list">
   					<option disabled selected value> - оберіть авто зі списку - </option>
@@ -57,18 +55,6 @@
 			for (name of JSON.parse(decodeURIComponent(document.cookie.substring("car_names=".length)))) {
 				//document.forms[0].list.innerHTML += '<option>'+name+'</option>'
 				document.forms[0].list.appendChild(new Option(name))
-			}
-			function gener_number(){
-				let phone_input = document.forms[0].tel
-				if (phone_input.value.length > 4){
-					phone_input.value = phone_input.value.substr(0, 4)
-				}
-				for (let i=0; i<9; i++) {
-					phone_input.value += Math.floor(Math.random() * 9)
-				}
-				if (!confirm(phone_input.value + " це ваш номер?")){
-					gener_number()
-				}
 			}
 			document.body.insertAdjacentHTML("afterend", '<div id="modal" hidden><p>Помістіть маленьке коло повністю всередину великого, щоб продовжити</p><div id="field"><div id="small_circle"></div><div id="big_circle"></div></div></div>')
 			document.forms[0].accept.onchange = function() {
