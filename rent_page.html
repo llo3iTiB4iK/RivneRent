@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="uk">
+	<head>
+		<meta name="author" content="Ляля Іван">
+		<title>Оформлення оренди</title>
+		<link rel="icon" href="materials/icon.png">
+		<link rel="stylesheet" href="styles.css">
+	</head>
+	<body id="rent_page">
+		<header>
+			<h1><img src="materials/icon.png"> RivneRent - сервіс оренди автомобілів у м.Рівне</h1>
+			<nav>
+				<a href="index.html">Головна</a>
+				<a href="list.html">Перелік авто</a>
+				<a href="rules.html">Правила та умови</a>
+				<a href="about_us.html">Про нас</a>
+			</nav>
+		</header>
+		<main>
+			<form onsubmit='return false'>
+				<label for="fname">Ім'я:</label>
+				<input type="text" name="fname">
+				<label for="sname">Прізвище:</label>
+				<input type="text" name="sname">
+				<label for="address">Адреса проживання:</label>
+				<input type="text" name="address">
+				<label for="tel">Номер телефону:</label>
+				<input type="text" value="+380" name="tel" maxlength="13" readonly>
+				<button onclick="gener_number()">Згенерувати номер</button>
+
+				<label for="list">Оберіть авто, яке бажаєте орендувати:</label>
+				<select name="list">
+  					<option disabled selected value> - оберіть авто зі списку - </option>
+				</select>
+				<label for="datetime">Вкажіть дату оренди авто:</label>
+				<input type="date" name="datetime">
+				<label for="period">Вкажіть термін оренди авто (діб):</label>
+				<input type="number" value="1" name="period" min=1 max=89>
+				<label for="passport">Завантажте сюди фото вашого паспорта та водійського посвідчення</label>
+				<input type="file" name="passport">	
+				<input type="file" name="drive_license">
+				<label for="accept">
+					<input type="checkbox" name="accept" style="width:20px; height:20px;">
+					Я підтверджую, що ознайомився з 
+					<a href="rules.html#rules_n_terms" target="_blank">правилами та умовами</a> 
+				сервісу</label>
+				<input type="submit" value="Перейти до оплати" id="submit_btn">	
+			</form>
+		</main>
+		<footer>
+			<p>
+				Copyright © 2023 Іван Ляля. Всі права захищені.<br>
+				Підтримка: <a href="mailto:lyalyaivan2004@gmail.com">lyalyaivan2004@gmail.com</a>
+			</p>
+    	</footer>
+    	<script>
+			for (name of JSON.parse(decodeURIComponent(document.cookie.substring("car_names=".length)))) {
+				//document.forms[0].list.innerHTML += '<option>'+name+'</option>'
+				document.forms[0].list.appendChild(new Option(name))
+			}
+			function gener_number(){
+				let phone_input = document.forms[0].tel
+				if (phone_input.value.length > 4){
+					phone_input.value = phone_input.value.substr(0, 4)
+				}
+				for (let i=0; i<9; i++) {
+					phone_input.value += Math.floor(Math.random() * 9)
+				}
+				if (!confirm(phone_input.value + " це ваш номер?")){
+					gener_number()
+				}
+			}
+			document.body.insertAdjacentHTML("afterend", '<div id="modal" hidden><p>Помістіть маленьке коло повністю всередину великого, щоб продовжити</p><div id="field"><div id="small_circle"></div><div id="big_circle"></div></div></div>')
+			document.forms[0].accept.onchange = function() {
+				if (document.forms[0].accept.checked){
+					modal.hidden = false
+					document.body.style.filter = 'blur(5px)'
+					modal.style.display = 'flex'
+					document.body.style.pointerEvents = "none"
+					gener_circles()
+				}	
+			}
+			function gener_circles(){
+				small_circle.style.position = 'absolute'
+				small_circle.style.top = Math.floor(Math.random() * (field.offsetHeight - small_circle.offsetHeight)) + 'px'
+				small_circle.style.left = Math.floor(Math.random() * (field.offsetWidth - small_circle.offsetWidth)) + 'px'
+				big_circle.style.position = 'absolute'
+				big_circle.style.top = Math.floor(Math.random() * (field.offsetHeight - big_circle.offsetHeight)) + 'px'
+				big_circle.style.left = Math.floor(Math.random() * (field.offsetWidth - big_circle.offsetWidth)) + 'px'
+			}
+			small_circle.onmousedown = function(e) {
+				let offset_x = e.clientX - small_circle.offsetLeft
+				let offset_y = e.clientY - small_circle.offsetTop
+				document.addEventListener('mousemove', drag)
+				document.addEventListener('mouseup', drop)
+				  
+				function drag(e) {
+					document.body.style.userSelect = "none"
+					let new_x = e.clientX - offset_x
+				  	let new_y = e.clientY - offset_y
+				  	if (new_x < 0) new_x = 0
+					if (new_x > (field.offsetWidth - small_circle.offsetWidth)) new_x = field.offsetWidth - small_circle.offsetWidth
+					if (new_y < 0) new_y = 0
+					if (new_y > (field.offsetHeight - small_circle.offsetHeight)) new_y = field.offsetHeight - small_circle.offsetHeight
+				  	small_circle.style.left = new_x + 'px'
+				    small_circle.style.top = new_y + 'px'
+				}
+				  
+				function drop(e) {
+					document.body.style.userSelect = ""
+				    document.removeEventListener('mousemove', drag)
+				    document.removeEventListener('mouseup', drop)
+				    let small_circle_radius = small_circle.offsetWidth/2
+				    let small_circle_center = [small_circle.offsetLeft+small_circle_radius, small_circle.offsetTop+small_circle_radius]
+				    let big_circle_radius = big_circle.offsetWidth/2
+				    let big_circle_center = [big_circle.offsetLeft+big_circle_radius, big_circle.offsetTop+big_circle_radius]
+				    if (distance(small_circle_center[0], small_circle_center[1], big_circle_center[0], big_circle_center[1])+small_circle_radius <= big_circle_radius) {
+				    	modal.hidden = true
+						document.body.style.filter = ''
+						modal.style.display = 'none'
+						document.body.style.pointerEvents = ""
+				    }
+				    else {
+				    	alert('Неправильно, спробуйте ще раз')
+				    	gener_circles()
+				    }
+				}
+
+				function distance(x1, y1, x2, y2) {
+				  	return Math.sqrt(Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2))
+				}
+			}
+    	</script>
+	</body>
+</html>

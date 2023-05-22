@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="uk">
+	<head>
+		<meta name="author" content="Ляля Іван">
+		<title>Перелік авто</title>
+		<link rel="icon" href="materials/icon.png">
+		<link rel="stylesheet" href="styles.css">
+	</head>
+	<body id="auto_list_page">
+		<header>
+			<h1><img src="materials/icon.png"> RivneRent - сервіс оренди автомобілів у м.Рівне</h1>
+			<nav>
+				<a href="index.html">Головна</a>
+				<a href="list.html#list">Перелік авто</a>
+				<a href="rules.html">Правила та умови</a>
+				<a href="about_us.html">Про нас</a>
+				<button type="button" id="rental-btn" onclick='window.location.href="rent_page.html"'>Перейти до оренди авто</button>
+			</nav>
+		</header>
+		<main>
+			<a name="list"></a>
+			<p id="we_offer">
+				Ми пропонуємо до оренди наступні автомобілі <a href="#pricelist" id="go_pricelist">(див.прайслист)</a>:
+				<button id="prices_in_list_btn" data-toggle-class="prices_for_car" onclick="show_prices_in_list()">Показувати тарифи в характеристиках</button>	
+			</p>		
+			<ul id="auto_list">
+				* Нагадуємо, що для оренди автомобіля потрібно мати вік не менше 21 року та стаж водіння не менше 2 років
+				<li>
+					<p>Mercedes-Benz C-Class</p>
+					<a href="cars/merc_c-class.jpg" target="_blank" name="merc_c-class">
+						<img src="cars/merc_c-class.jpg" class="shadowed">
+					</a>
+					<div class="specifications">
+						<table width='38%' class='characteristics'>
+							<tr>
+								<td>
+									<img src="car_specifications/engine.svg" class="specifications_icon">
+									<p>2.0 л</p>
+								</td>
+								<td>
+									<img src="car_specifications/fuel.svg" class="specifications_icon">
+									<p>Бензин</p>
+								</td>
+								<td>
+									<img src="car_specifications/transmission.svg" class="specifications_icon">
+									<p>Автомат</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<img src="car_specifications/passenger.svg" class="specifications_icon">
+									<p>5 людей</p>
+								</td>
+								<td>
+									<img src="car_specifications/conditioner.svg" class="specifications_icon">
+									<p>Клімат-контроль</p>
+								</td>
+								<td>
+									<img src="car_specifications/fuel consumption.svg" class="specifications_icon">
+									<p>5.9 л/100км</p>
+								</td>
+							</tr>
+						</table>					
+					</div>
+				</li>
+				<li>
+					<p>BMW 3 Series</p>
+					<a href="cars/bmw_3series.jpg" target="_blank" name="bmw_3series">
+						<img src="cars/bmw_3series.jpg" class="to_right_side shadowed">
+					</a>
+					<div class="specifications">
+						<table width='38%' class='characteristics'>
+							<tr>
+								<td>
+									<img src="car_specifications/engine.svg" class="specifications_icon">
+									<p>2.0 л</p>
+								</td>
+								<td>
+									<img src="car_specifications/fuel.svg" class="specifications_icon">
+									<p>Бензин</p>
+								</td>
+								<td>
+									<img src="car_specifications/transmission.svg" class="specifications_icon">
+									<p>Механіка</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<img src="car_specifications/passenger.svg" class="specifications_icon">
+									<p>5 людей</p>
+								</td>
+								<td>
+									<img src="car_specifications/conditioner.svg" class="specifications_icon">
+									<p>Клімат-контроль</p>
+								</td>
+								<td>
+									<img src="car_specifications/fuel consumption.svg" class="specifications_icon">
+									<p>6.3 л/100км</p>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</li>
+				<li>
+					<p>Ford Mustang</p>
+					<a href="cars/ford_mustang.jpg" target="_blank" name="ford_mustang">
+						<img src="cars/ford_mustang.jpg" class="shadowed">
+					</a>
+					<div class="specifications">
+						<table width='38%' class='characteristics'>
+							<tr>
+								<td>
+									<img src="car_specifications/engine.svg" class="specifications_icon">
+									<p>3.7 л</p>
+								</td>
+								<td>
+									<img src="car_specifications/fuel.svg" class="specifications_icon">
+									<p>Бензин</p>
+								</td>
+								<td>
+									<img src="car_specifications/transmission.svg" class="specifications_icon">
+									<p>Автомат</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<img src="car_specifications/passenger.svg" class="specifications_icon">
+									<p>5 людей</p>
+								</td>
+								<td>
+									<img src="car_specifications/conditioner.svg" class="specifications_icon">
+									<p>Клімат-контроль</p>
+								</td>
+								<td>
+									<img src="car_specifications/fuel consumption.svg" class="specifications_icon">
+									<p>11.8 л/100км</p>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</li>
+				<li>
+					<p>Dodge Charger</p>
+					<a href="cars/dodge_charger.jpg" target="_blank" name="dodge_charger">
+						<img src="cars/dodge_charger.jpg" class="to_right_side shadowed">
+					</a>
+					<div class="specifications">
+						<table width='38%' class='characteristics'>
+							<tr>
+								<td>
+									<img src="car_specifications/engine.svg" class="specifications_icon">
+									<p>5.7 л</p>
+								</td>
+								<td>
+									<img src="car_specifications/fuel.svg" class="specifications_icon">
+									<p>Бензин</p>
+								</td>
+								<td>
+									<img src="car_specifications/transmission.svg" class="specifications_icon">
+									<p>Автомат</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<img src="car_specifications/passenger.svg" class="specifications_icon">
+									<p>5 людей</p>
+								</td>
+								<td>
+									<img src="car_specifications/conditioner.svg" class="specifications_icon">
+									<p>Клімат-контроль</p>
+								</td>
+								<td>
+									<img src="car_specifications/fuel consumption.svg" class="specifications_icon">
+									<p>12.3 л/100км</p>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</li>
+				<li>
+					<p>Chevrolet Camaro</p>
+					<a href="cars/chevrolet_camaro.jpg" target="_blank" name="chevrolet_camaro">
+						<img src="cars/chevrolet_camaro.jpg" class="shadowed">
+					</a>
+					<div class="specifications">
+						<table width='38%' class='characteristics'>
+							<tr>
+								<td>
+									<img src="car_specifications/engine.svg" class="specifications_icon">
+									<p>6.2 л</p>
+								</td>
+								<td>
+									<img src="car_specifications/fuel.svg" class="specifications_icon">
+									<p>Бензин</p>
+								</td>
+								<td>
+									<img src="car_specifications/transmission.svg" class="specifications_icon">
+									<p>Механіка</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<img src="car_specifications/passenger.svg" class="specifications_icon">
+									<p>4 людей</p>
+								</td>
+								<td>
+									<img src="car_specifications/conditioner.svg" class="specifications_icon">
+									<p>Клімат-контроль</p>
+								</td>
+								<td>
+									<img src="car_specifications/fuel consumption.svg" class="specifications_icon">
+									<p>12.4 л/100км</p>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</li>
+				<li>
+					<p>Audi A4</p>
+					<a href="cars/audi_a4.jpg" target="_blank" name="audi_a4">
+						<img src="cars/audi_a4.jpg" class="to_right_side shadowed">
+					</a>
+					<div class="specifications">
+						<table width='38%' class='characteristics'>
+							<tr>
+								<td>
+									<img src="car_specifications/engine.svg" class="specifications_icon">
+									<p>2.0 л</p>
+								</td>
+								<td>
+									<img src="car_specifications/fuel.svg" class="specifications_icon">
+									<p>Бензин</p>
+								</td>
+								<td>
+									<img src="car_specifications/transmission.svg" class="specifications_icon">
+									<p>Автомат</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<img src="car_specifications/passenger.svg" class="specifications_icon">
+									<p>5 людей</p>
+								</td>
+								<td>
+									<img src="car_specifications/conditioner.svg" class="specifications_icon">
+									<p>Клімат-контроль</p>
+								</td>
+								<td>
+									<img src="car_specifications/fuel consumption.svg" class="specifications_icon">
+									<p>6.3 л/100км</p>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</li>
+				<li>
+					<p>Toyota Corolla</p>
+					<a href="cars/toyota_corolla.jpg" target="_blank" name="toyota_corolla">
+						<img src="cars/toyota_corolla.jpg" class="shadowed">
+					</a>
+					<div class="specifications">
+						<table width='38%' class='characteristics'>
+							<tr>
+								<td>
+									<img src="car_specifications/engine.svg" class="specifications_icon">
+									<p>1.6 л</p>
+								</td>
+								<td>
+									<img src="car_specifications/fuel.svg" class="specifications_icon">
+									<p>Бензин</p>
+								</td>
+								<td>
+									<img src="car_specifications/transmission.svg" class="specifications_icon">
+									<p>Механіка</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<img src="car_specifications/passenger.svg" class="specifications_icon">
+									<p>5 людей</p>
+								</td>
+								<td>
+									<img src="car_specifications/conditioner.svg" class="specifications_icon">
+									<p>Клімат-контроль</p>
+								</td>
+								<td>
+									<img src="car_specifications/fuel consumption.svg" class="specifications_icon">
+									<p>6.4 л/100км</p>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</li>
+				<li>
+					<p>Nissan Altima</p>
+					<a href="cars/nissan_altima.jpg" target="_blank" name="nissan_altima">
+						<img src="cars/nissan_altima.jpg" class="to_right_side shadowed">
+					</a>
+					<div class="specifications">
+						<table width='38%' class='characteristics'>
+							<tr>
+								<td>
+									<img src="car_specifications/engine.svg" class="specifications_icon">
+									<p>2.0 л</p>
+								</td>
+								<td>
+									<img src="car_specifications/fuel.svg" class="specifications_icon">
+									<p>Бензин</p>
+								</td>
+								<td>
+									<img src="car_specifications/transmission.svg" class="specifications_icon">
+									<p>Варіатор</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<img src="car_specifications/passenger.svg" class="specifications_icon">
+									<p>5 людей</p>
+								</td>
+								<td>
+									<img src="car_specifications/conditioner.svg" class="specifications_icon">
+									<p>Клімат-контроль</p>
+								</td>
+								<td>
+									<img src="car_specifications/fuel consumption.svg" class="specifications_icon">
+									<p>8.1 л/100км</p>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</li>
+				<li>
+					<p>Jeep Wrangler</p>
+					<a href="cars/jeep_wrangler.jpeg" target="_blank" name="jeep_wrangler">
+						<img src="cars/jeep_wrangler.jpeg" class="shadowed">
+					</a>
+					<div class="specifications">
+						<table width='38%' class='characteristics'>
+							<tr>
+								<td>
+									<img src="car_specifications/engine.svg" class="specifications_icon">
+									<p>2.8 л</p>
+								</td>
+								<td>
+									<img src="car_specifications/fuel.svg" class="specifications_icon">
+									<p>Дизель</p>
+								</td>
+								<td>
+									<img src="car_specifications/transmission.svg" class="specifications_icon">
+									<p>Автомат</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<img src="car_specifications/passenger.svg" class="specifications_icon">
+									<p>5 людей</p>
+								</td>
+								<td>
+									<img src="car_specifications/conditioner.svg" class="specifications_icon">
+									<p>Клімат-контроль</p>
+								</td>
+								<td>
+									<img src="car_specifications/fuel consumption.svg" class="specifications_icon">
+									<p>9.5 л/100км</p>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</li>
+				<li>
+					<p>Honda Civic</p>
+					<a href="cars/honda_civic.jpg" target="_blank" name="honda_civic">
+						<img src="cars/honda_civic.jpg" class="to_right_side shadowed">
+					</a>
+					<div class="specifications">
+						<table width='38%' class='characteristics'>
+							<tr>
+								<td>
+									<img src="car_specifications/engine.svg" class="specifications_icon">
+									<p>1.6 л</p>
+								</td>
+								<td>
+									<img src="car_specifications/fuel.svg" class="specifications_icon">
+									<p>Бензин</p>
+								</td>
+								<td>
+									<img src="car_specifications/transmission.svg" class="specifications_icon">
+									<p>Механіка</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<img src="car_specifications/passenger.svg" class="specifications_icon">
+									<p>5 людей</p>
+								</td>
+								<td>
+									<img src="car_specifications/conditioner.svg" class="specifications_icon">
+									<p>Клімат-контроль</p>
+								</td>
+								<td>
+									<img src="car_specifications/fuel consumption.svg" class="specifications_icon">
+									<p>7.0 л/100км</p>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</li>
+			</ul>
+			<a name="pricelist"></a>
+			
+			<table id="pricelist">
+				<caption>Прайслист на оренду автомобілів</caption>
+				<thead>
+					<tr>
+						<th rowspan="2" width="40%">Марка та модель автомобіля (натисніть на конкретну модель щоб перейти до її характеристик)</th>
+						<th colspan="4" width="45%">Вартість прокату автомобіля, UAH/доба</th>
+						<th rowspan="2">Вартість задатку,<br>UAH <button class="question_button" onclick="alert('* На час дії договору про оренду необхідно внести відповідну заставу, яка буде повернена клієнтові в 100% обсязі за умови, що умови договору не були порушені.')">?</button></th>
+					</tr>
+					<tr>
+						<th>1-3 діб</th>
+						<th>4-9 діб</th>
+						<th>10-25 діб</th>
+						<th>26-89 діб</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><a href="#merc_c-class">Mercedes-Benz C-Class</a></td>
+						<td>2700</td>
+						<td>2450</td>
+						<td>2150</td>
+						<td>1750</td>
+						<td>20000</td>
+					</tr>
+					<tr>
+						<td><a href="#bmw_3series">BMW 3 Series</a></td>
+						<td>2500</td>
+						<td>2300</td>
+						<td>2000</td>
+						<td>1600</td>
+						<td>17000</td>
+					</tr>
+					<tr>
+						<td><a href="#ford_mustang">Ford Mustang</a></td>
+						<td>6000</td>
+						<td>5600</td>
+						<td>5200</td>
+						<td>4000</td>
+						<td>50000</td>
+					</tr>
+					<tr>
+						<td><a href="#dodge_charger">Dodge Charger</a></td>
+						<td>6000</td>
+						<td>5200</td>
+						<td>4800</td>
+						<td>4000</td>
+						<td>60000</td>
+					</tr>
+					<tr>
+						<td><a href="#chevrolet_camaro">Chevrolet Camaro</a></td>
+						<td>3200</td>
+						<td>2800</td>
+						<td>2400</td>
+						<td>2000</td>
+						<td>40000</td>
+					</tr>
+					<tr>
+						<td><a href="#audi_a4">Audi A4</a></td>
+						<td>3400</td>
+						<td>3060</td>
+						<td>2720</td>
+						<td>2200</td>
+						<td>20000</td>
+					</tr>
+					<tr>
+						<td><a href="#toyota_corolla">Toyota Corolla</a></td>
+						<td>1700</td>
+						<td>1600</td>
+						<td>1450</td>
+						<td>1200</td>
+						<td>14000</td>
+					</tr>
+					<tr>
+						<td><a href="#nissan_altima">Nissan Altima</a></td>
+						<td>2150</td>
+						<td>1950</td>
+						<td>1700</td>
+						<td>1350</td>
+						<td>20000</td>
+					</tr>
+					<tr>
+						<td><a href="#jeep_wrangler">Jeep Wrangler</a></td>
+						<td>3600</td>
+						<td>3200</td>
+						<td>2800</td>
+						<td>2000</td>
+						<td>24000</td>
+					</tr>
+					<tr>
+						<td><a href="#honda_civic">Honda Civic</a></td>
+						<td>2400</td>
+						<td>2250</td>
+						<td>2050</td>
+						<td>1400</td>
+						<td>17000</td>
+					</tr>
+				</tbody>
+			</table>
+			<table id="price_includes">
+				<tbody>
+					<tr>
+						<td width="65%">
+							<h3>Вартість прокату автомобіля включає в себе</h3>
+							<ul>
+								<li>Страховку автомобіля</li>
+								<li>Цілодобову підтримку 24/7</li>
+								<li>Допомога в дорозі</li>
+							</ul>
+						</td>
+						<td width="35%">
+							<h3>Додаткові опції</h3>
+							<ul>
+								<li>GPS-навігатор</li>
+								<li>Дитяче автокрісло</a></li>
+								<li>Доставка і підбір автомобіля</li>
+							</ul>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</main>
+		<footer>
+			<p>
+				Copyright © 2023 Іван Ляля. Всі права захищені.<br>
+				Підтримка: <a href="mailto:lyalyaivan2004@gmail.com">lyalyaivan2004@gmail.com</a>
+			</p>
+    	</footer>
+    	<script>
+    		// підтягування в випадаючий список моделей автомобілів
+    		let car_names = []
+    		for(let i=2; i<pricelist.rows.length; i++){
+    			car_names.push(pricelist.rows[i].cells[0].textContent)
+    		}
+    		document.cookie = "car_names="+JSON.stringify(car_names)
+    		// обробник наведення курсора на "?" в прайслисті
+			document.querySelector('.question_button').onmouseover = function(event){
+				event.target.style.border = "3px ridge yellow"
+				event.relatedTarget.style.backgroundColor = "black"	
+				event.relatedTarget.style.color = "white"		
+			}
+			document.querySelector('.question_button').onmouseout = function(event){
+				event.target.style.border = ""
+				event.relatedTarget.style.backgroundColor = ""
+				event.relatedTarget.style.color = ""
+			}
+			// створення таблиць-цін для кожного автомобіля на основі таблиці-прйслиста
+    		let specifications = document.querySelectorAll('.specifications')
+			let labels = pricelist.rows[1].cells
+			let newTable = '<table class="prices_for_car" hidden><tr bgcolor="#0057b7" style="color:white;"><td>Період</td>'
+			for (let i=0; i<=3; i++) {
+				newTable += '<td>'+labels[i].textContent+'</td>'
+			}
+			newTableCopy = newTable
+			for (let i=0; i<specifications.length; i++) {
+				newTable = newTableCopy
+				newTable += '<td><span>Завдаток </span></td></tr><tr bgcolor="#ffd700" border="1px solid black"><td>Ціна за добу</td>'
+				for (let j=0; j<=4; j++){
+					newTable += '<td>'+pricelist.rows[i+2].cells[j+1].textContent+' грн</td>'
+				}
+				specifications[i].innerHTML += newTable+'</tr></table>'
+			}
+			// вставка кнопки з додатковою інформацією про задаток в таблицю кожного автомобіля
+			document.querySelectorAll('.prices_for_car span').forEach(function(element) {
+				let button = document.querySelector('.question_button').cloneNode(true)
+				button.onmouseover = document.querySelector('.question_button').onmouseover
+				button.onmouseout = document.querySelector('.question_button').onmouseout
+				button.style.verticalAlign = 'middle'
+				element.after(button)
+				element.outerHTML = element.innerHTML
+			});
+			// показування/приховання тарифів в характеристиках до кожного автомобіля з застосування прийому проектування "поведінка"
+			function show_prices_in_list() {
+				let newButton = document.getElementById('prices_in_list_btn')
+				let Class = newButton.dataset.toggleClass
+				newButton.innerText = document.querySelector('.' + Class).hidden ? newButton.innerText.replace('П', 'Не п') : newButton.innerText.replace('Не п', 'П')
+			    document.querySelectorAll('.' + Class).forEach(function(elem) {
+			    	elem.hidden = !elem.hidden
+			    })
+			    pricelist.hidden = !pricelist.hidden
+			    go_pricelist.hidden = !go_pricelist.hidden
+			}
+    	</script>
+	</body>
+</html>

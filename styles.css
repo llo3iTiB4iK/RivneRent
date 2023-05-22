@@ -1,0 +1,340 @@
+* {
+	box-sizing: border-box;
+}
+a:link{
+	color:black;
+}
+a:visited{
+	color:crimson;
+}
+a:active{
+	color:yellow;
+}
+p a:hover{
+	font-size: 1.1em;
+	text-shadow: 2px 7px 5px rgba(0,0,0,0.3), 
+    0px -4px 10px rgba(255,255,255,0.3);
+}
+body#main_page{
+	background-image: url("materials/main_page_bg.jpeg");
+}
+body#about_us_page{
+	background-image: url("materials/about_us_bg.jpg");
+}
+body#rules_page{
+	background-color: #f1e6c5;
+}
+body#auto_list_page{
+	background-image: url("materials/list_bg.jpg");
+}
+main{
+	font-family: Trebuchet MS;
+	font-size: 18px;
+}
+nav{
+	font-family: Courier New;
+	font-size: 24px;
+}
+caption{
+	font-size: 24px;
+	padding-bottom: 5px;
+}
+body{
+	text-align: center;
+	line-height: 24px;
+	margin:0;
+}
+ol,ul{
+	text-align: left;
+}
+h2{
+	font-weight: normal;	
+	text-shadow: -1px 1px 0 #41ba45, 1px 1px 0 #c63d2b, 1px -1px 0 #42afac,	-1px -1px 0 #c6c23f;
+}
+h1 img{
+	width:40px;
+}
+h2 img{
+	width:20px;
+}
+iframe{
+	border:0;
+	width:600px;
+	height:450px;
+}
+#auto_list{
+	list-style-type: square;
+	padding-right: 40px;
+}
+#auto_list img{
+	width:60%;
+	float:left;
+	margin-right:2%;
+	transition: transform 0.2s ease-in-out;
+}
+#pricelist{
+	margin-top: 100px;
+	margin-left:auto;
+	margin-right: auto;
+	width: 95%;
+	border-collapse: collapse;
+}
+#pricelist th,#pricelist td{
+	border:1px solid;
+	padding: 10px;
+}
+#pricelist thead{
+	background-color: mistyrose;
+}
+#price_includes{
+	width:80%;
+	margin: 15px auto 15px auto;
+	text-align: left;
+	padding-left:5%;
+	border:0;
+}
+#price_includes td{
+	padding:0 15px;
+}
+#price_includes ul{
+	padding-left: 0;
+	list-style: none;
+}
+#price_includes ul>li:before{
+	content: '✔';
+    color: green;
+    margin-right:20px;
+}
+#price_includes td:hover{
+	transform: scale(1.04);
+	background-color: palegoldenrod;
+}
+#rules{
+	margin-left:2%;
+	margin-right:2%;
+	padding:.5% 2% .5% 3%;
+	text-align: justify;
+	background-color: rgba(255, 0, 0, 0.3);
+}
+header{
+	position:sticky;
+	top:0px;
+}
+header h1{
+	background-color: rgba(255,255,255,0.7);
+	margin:0;
+	padding-bottom:20px;
+	padding-top: 10px;
+}
+header h1:hover{
+	background-color: rgba(255,255,255,1);
+}
+nav{
+	padding:10px;
+	background-color: rgba(0,0,0,0.7);
+	color:white;
+	margin-bottom: 10px;
+}
+nav:hover{
+	background-color: rgba(0,0,0,1);
+}
+nav a:link{
+	color:white;
+	padding-left: 20px;
+	padding-right: 20px;
+}
+footer{
+	background-color:rgba(252,246,224,0.7);
+	margin-top:30px;
+	border-top:1px solid;
+}
+footer p{
+	margin:0;
+	padding:10px;
+}
+#auto_list img.to_right_side{
+	margin-right:0;
+	margin-left:2%;
+	float:right;
+}
+img.shadowed{
+	border:0.5px solid;
+	box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
+#main_page main p, #rules_page main p, #about_us_page main p{
+	background-color: rgba(255,255,255,0.6);
+	margin-left: 20px;
+	margin-right: 20px;
+}
+#main_page main p:hover, #rules_page main p:hover, #about_us_page main p:hover{
+	background-color: rgba(255,255,255,0.9);
+}
+thead+tbody{
+	background-color: #FFFFE0;
+}
+#pricelist tbody tr:hover{
+	font-size: 1.2em;
+	background-color: white;
+}
+nav a:hover{
+	font-size: 1.03em;
+	background-color: darkolivegreen;
+}
+#auto_list li:after{
+	content: '';
+  	background-color: black;
+  	height: 3px;
+  	display: block;
+  	clear:both;
+}
+#auto_list li>p:first-child{
+	text-align: center;
+	font-size: 30px;
+	text-shadow: 3px 3px 20px #ffff00, -2px 1px 30px #ffff00;
+	margin-top: 60px;
+}
+#auto_list .specifications_icon{
+	float:none;
+	max-height:130px;
+	min-height:90px;
+	min-width:120px;
+}
+.specifications .characteristics td{
+	text-align: center;
+	vertical-align: bottom;
+	border: 3px dotted #ffff00;
+	transition: transform 0.2s ease-in-out;
+}
+.specifications .characteristics{	
+	border-collapse: collapse;
+	background-color: #fff9e6;
+}
+.specifications .characteristics td p{
+	margin: 5px;
+}
+.specifications .characteristics td:hover{
+	transform: scale(1.15);
+	background-color: white;
+}
+#auto_list img:hover{
+	transform: scale(1.05);
+}
+form label{
+	display:block;
+	font-weight: bold;
+	margin-top: 30px;
+}
+form{
+	width:50%;
+	border:1px solid black;
+	margin: 0 auto 0 auto;
+	text-align: left;
+	padding-left: 40px;	
+	background-color: rgba(255,255,255,0.6);
+	border-radius: 10px;
+}
+form:hover{
+	background-color: rgba(255,255,255,0.8);
+	transform:scale(1.03);
+	transition:0.3s ease-in-out;
+	border-radius:0;
+}
+#rent_page main{
+	background: url('materials/about_us_bg.jpg');
+	padding:40px 0;
+}
+#rent_page footer{
+	margin:0;
+}
+#rent_page nav{
+	margin-bottom: 0;
+}
+#submit_btn{
+	box-align: center;
+	margin:30px 30% 30px 25%;
+	width:35%;
+	height:40px;
+	font-size: 22px;
+	border-radius: 50px;
+	background-color: rgb(76, 175, 80);
+	color:white;
+}
+form input, select{
+	width:40%;
+	height:2em;
+	font-size: 15px;
+}
+#modal{
+	text-align: center;
+	width: 800px;
+	height: 600px;
+  	position: fixed;
+  	top: 50%;
+  	left: 50%;
+  	transform: translate(-50%, -50%);
+  	background-color: white;
+  	box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  	flex-direction: column;
+}
+#field{
+	background-color: black;
+	flex-grow: 1;
+	position: relative;
+}
+#modal p{
+	font-size: 22px;
+}
+#small_circle{
+	border-radius: 50%;
+	height: 40px;
+	width: 40px;
+	background-color: blue;
+	z-index: 10;
+}
+#big_circle{
+	border-radius: 50%;
+	height: 80px;
+	width: 80px;
+	background-color: yellow;
+}
+#rental-btn{
+	background-color: #4CAF50;
+	border-radius: 20px;
+	color: white;
+	font-size: 20px;
+	padding: 10px 20px;
+}
+#rental-btn:hover{
+	transform: scale(1.05);
+	opacity: 80%;
+}
+.prices_for_car{
+	border-collapse:collapse;
+	text-align:center;
+	margin-top:30px;
+	font-size:16px;
+	line-height:3em;
+	border:1px solid black;
+	width: 38%;
+}
+.prices_for_car td{
+	border: 1px solid black;
+}
+.question_button{
+	border-radius: 50%;
+	background-color: white;
+	width: 20px;
+	height: 20px;
+	font-size: 12px;
+	font-weight: bold;
+	vertical-align: top;
+}
+#prices_in_list_btn{
+	background-color: lightyellow;
+	border: 1px double black;
+	margin-left: 20px;
+	padding:8px;
+	border-radius: 10px;
+	font-weight: bold;
+	font-size: 15px;
+}
