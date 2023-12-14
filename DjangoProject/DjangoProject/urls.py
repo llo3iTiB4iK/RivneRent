@@ -14,26 +14,25 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
+# from django.contrib import admin  # leave as comment if admin panel is not needed
 from django.urls import path
 from cars.views import manage_cars
 from auth.views import login_view, logout_view, manage_users
 from bookings.views import make_booking, bookings, captchas
 from views import page_view
-from django.views.generic import TemplateView
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', TemplateView.as_view(template_name='index.html')),
-    path('<str:page>.html', page_view),
-    path('cars/<str:page>.html', page_view),
-    path('cars/', manage_cars),
-    path('make_booking/', make_booking),
-    path('bookings', bookings),
-    path('login/', login_view),
-    path('logout/', logout_view),
-    path('users/', manage_users),
-    path('discount/', make_booking),
-    path('captcha/', captchas)
+    # path('admin/', admin.site.urls),  # leave as comment if admin panel is not needed
+    path('', page_view),  # returns main page
+    path('<str:page>.html', page_view),  # returns "page.html" page
+    path('cars/<str:page>.html', page_view),  # returns "car.html" page with the car requested
+    path('cars/', manage_cars),  # add, edit or delete cars
+    path('make_booking/', make_booking),  # add booking
+    path('bookings', bookings),  # get bookings or change one's status
+    path('login/', login_view),  # log in
+    path('logout/', logout_view),  # log out
+    path('users/', manage_users),  # add, edit or delete workers
+    path('discount/', make_booking),  # get discount for user
+    path('captcha/', captchas)  # get or check captcha
 ]
