@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="uk">
+	<head>
+		{% load static %}
+		<meta name="author" content="Ляля Іван">
+		<title>Адміністрування</title>
+		<link rel="icon" href="{% static 'materials/icon.png' %}">
+		<link rel="stylesheet" href="{% static 'styles.css' %}">
+		<script src="{% static 'logOut.js' %}"></script>
+		<script src="{% static 'adminPageFunctions.js' %}"></script>
+	</head>
+	<body id="admin_page" onload="search.value=''; sessionStorage.setItem('rivnerent_auth_token', new URLSearchParams(window.location.search).get('token'));">
+		{% csrf_token %}
+		<div id="page_content">
+			<header>
+				<h1>
+					<img src="{% static 'materials/icon.png' %}"> RivneRent - сервіс оренди автомобілів у м.Рівне
+					<img src="{% static 'materials/logout.png' %}" id='log_out' onclick="log_out()">
+				</h1>
+				<nav>
+					<a href="index.html">Головна</a>
+					<a href="cars.html">Перелік авто</a>
+					<a href="rules.html">Правила та умови</a>
+					<a href="about_us.html">Про нас</a>
+					<a id="archive1" href="archive.html?all=true" title="Перейти до архіву бронювань"><img src="{% static 'materials/archive.png' %}" height="55px"></a>
+				</nav>
+			</header>
+			<main>
+				<div id="add_worker" hidden onclick="open_modal(this);">
+					<img src="{% static 'materials/add_.svg' %}" width="41px">
+					<p><b>Додати<br>працівника</b></p>
+				</div>
+				<table id="toggle" align='center' bgcolor='white' width='40%' border='1' cellpadding='10' onclick="toggle(event)">
+					<tr>
+						<td id='page_selected' width="50%">Автомобілі</td>
+						<td>Працівники</td>
+					</tr>
+				</table>
+				<div id="search_container">
+					<input type="text" name="search" id="search" placeholder="Введіть марку/модель/рік" value="" oninput="filter(this.value)">
+					<img src="{% static 'materials/search.png' %}" height="35.2px" id="search_icon">
+				</div>
+				<ul id="auto_list">
+					{% for car in cars %}
+					<li data-id="{{ car.id }}">
+						<p>
+							<span class="can_be_editable">{{ car.make }}</span> <span class="can_be_editable">{{ car.model }}</span> (<span class="can_be_editable">{{ car.year }}</span>)&nbsp;
+							<a href="#" onclick="window.open('archive.html?car_id={{ car.id }}', '_blank')" class="watch_archive">(див. архів)</a>
+							<span class="car_category can_be_editable" title="Бюджетні/Комфорт/Кросовери/Бізнес/Спорт/Преміум 4х4">{{ car.get_category_display }}</span>
+						</p>
+						<img src="{% static 'materials/edit.svg' %}" class="edit_delete_icons" onclick="editCar(this)">
+						<img src="{% static 'materials/delete.svg' %}" class="edit_delete_icons" onclick="deleteCar(this)">
+						<img src="{% static 'materials/save.svg' %}" class="edit_delete_icons" hidden onclick="saveChanges(this, 'PUT')">
+						<img src="{% static 'materials/cancel.svg' %}" class="edit_delete_icons" hidden onclick="window.location.reload()">
+						<img src="{{ car.image.url }}" class="shadowed{% if forloop.counter|divisibleby:2 %} to_right_side{% endif %}">
+						<div class="fileInputBlock{% if forloop.counter|divisibleby:2 %} to_right_side{% endif %}" hidden>
+							<img src="{% static 'materials/add_.svg' %}" height="40%">
+						</div>
+						<input type="file" accept=".jpeg, .jpg" class="fileInput{% if forloop.counter|divisibleby:2 %} to_right{% endif %}" onchange="validateFile(this)">
+						<div class="specifications">
+							<table width="38%" class="characteristics">
+								<tbody><tr>
+									<td>
+										<img src="{% static 'car_specifications/engine.svg' %}" class="specifications_icon">
+										<p><span class="can_be_editable">{{ car.features.engine_size }}</span> л</p>
+									</td>
+									<td>
+										<img src="{% static 'car_specifications/fuel.svg' %}" class="specifications_icon">
+										<p><span class="can_be_editable">{{ car.features.get_fuel_type_display }}</span></p>
+									</td>
+									<td>
+										<img src="{% static 'car_specifications/transmission.svg' %}" class="specifications_icon">
+										<p><span class="can_be_editable">{{ car.features.get_gearbox_display }}</span></p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img src="{% static 'car_specifications/passenger.svg' %}" class="specifications_icon">
+										<p><span class="can_be_editable">{{ car.features.seats }}</span> людей</p>
+									</td>
+									<td>
+										<img src="{% static 'car_specifications/conditioner.svg' %}" class="specifications_icon">
+										<p><span class="can_be_editable">{{ car.features.get_conditioner_display }}</span></p>
+									</td>
+									<td>
+										<img src="{% static 'car_specifications/fuel consumption.svg' %}" class="specifications_icon">
+										<p><span class="can_be_editable">{{ car.features.fuel_consumption }}</span> л/100км</p>
+									</td>
+								</tr>
+								</tbody></table>
+							<table class="prices_for_car">
+								<tbody>
+								<tr bgcolor="#0057b7" class="white_text">
+									<td>Період</td>
+									<td>1-3 діб</td>
+									<td>4-9 діб</td>
+									<td>10-25 діб</td>
+									<td>26-89 діб</td>
+									<td>Завдаток</td>
+								</tr>
+								<tr bgcolor="#ffd700">
+									<td>Ціна за добу</td>
+									<td><span class="can_be_editable">{{ car.prices.daily_1to3 }}</span> грн</td>
+									<td><span class="can_be_editable">{{ car.prices.daily_4to9 }}</span> грн</td>
+									<td><span class="can_be_editable">{{ car.prices.daily_10to25 }}</span> грн</td>
+									<td><span class="can_be_editable">{{ car.prices.daily_26to89 }}</span> грн</td>
+									<td><span class="can_be_editable">{{ car.prices.mortgage }}</span> грн</td>
+								</tr>
+								</tbody>
+							</table>
+						</div>
+					</li>
+					{% endfor %}
+					<li hidden>
+						<p>
+							<span class="can_be_editable"></span>&nbsp;<span class="can_be_editable"></span> (<span class="can_be_editable"></span>)&nbsp;
+							<span class="car_category can_be_editable" title="Бюджетні/Комфорт/Кросовери/Бізнес/Спорт/Преміум 4х4">{{ car.get_category_display }}</span>
+						</p>
+						<img src="{% static 'materials/edit.svg' %}" class="edit_delete_icons">
+						<img src="{% static 'materials/delete.svg' %}" class="edit_delete_icons">
+						<img src="{% static 'materials/save.svg' %}" class="edit_delete_icons" hidden onclick="saveChanges(this, 'POST')">
+						<img src="{% static 'materials/cancel.svg' %}" class="edit_delete_icons" hidden onclick="window.location.reload()">
+						<img src="" class="shadowed{% if not cars|length|divisibleby:2 %} to_right_side{% endif %}" height="503px" hidden>
+						<div class="fileInputBlock{% if not cars|length|divisibleby:2 %} to_right_side{% endif %}">
+							<img src="{% static 'materials/add_.svg' %}">
+						</div>
+						<input type="file" accept=".jpeg, .jpg" class="fileInput{% if not cars|length|divisibleby:2 %} to_right{% endif %}" style="height: 500px;" onchange="validateFile(this)">
+						<div class="specifications">
+							<table width="38%" class="characteristics">
+								<tbody><tr>
+									<td>
+										<img src="{% static 'car_specifications/engine.svg' %}" class="specifications_icon">
+										<p><span class="can_be_editable"></span> л</p>
+									</td>
+									<td>
+										<img src="{% static 'car_specifications/fuel.svg' %}" class="specifications_icon">
+										<p><span class="can_be_editable"></span></p>
+									</td>
+									<td>
+										<img src="{% static 'car_specifications/transmission.svg' %}" class="specifications_icon">
+										<p><span class="can_be_editable"></span></p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<img src="{% static 'car_specifications/passenger.svg' %}" class="specifications_icon">
+										<p><span class="can_be_editable"></span> людей</p>
+									</td>
+									<td>
+										<img src="{% static 'car_specifications/conditioner.svg' %}" class="specifications_icon">
+										<p><span class="can_be_editable"></span></p>
+									</td>
+									<td>
+										<img src="{% static 'car_specifications/fuel consumption.svg' %}" class="specifications_icon">
+										<p><span class="can_be_editable"></span> л/100км</p>
+									</td>
+								</tr>
+								</tbody>
+							</table>
+							<table class="prices_for_car">
+								<tbody>
+								<tr bgcolor="#0057b7" class="white_text">
+									<td>Період</td>
+									<td>1-3 діб</td>
+									<td>4-9 діб</td>
+									<td>10-25 діб</td>
+									<td>26-89 діб</td>
+									<td>Завдаток</td>
+								</tr>
+								<tr bgcolor="#ffd700">
+									<td>Ціна за добу</td>
+									<td><span class="can_be_editable"></span> грн</td>
+									<td><span class="can_be_editable"></span> грн</td>
+									<td><span class="can_be_editable"></span> грн</td>
+									<td><span class="can_be_editable"></span> грн</td>
+									<td><span class="can_be_editable"></span> грн</td>
+								</tr>
+								</tbody>
+							</table>
+						</div>
+					</li>
+				</ul>
+				<div id="add_car" onclick="addCar(this)">
+					<div id="circle"><img src="{% static 'materials/add.svg' %}" width="180px"></div>
+					<h3>Додати авто</h3>
+				</div>
+				<table id="workers" align='center' bgcolor='white' cellpadding='15' cellspacing="0" hidden>
+					<thead>
+						<tr>
+							<td style="width: 60px;">№</td>
+							<td>Ім'я та прізвище</td>
+							<td>Логін</td>
+							<td>Email</td>
+							<td class="max_content_width">Дата приєднання</td>
+							<td class="max_content_width">Останній вхід</td>
+						</tr>
+					</thead>
+					<tbody id='workers_list'>
+						{% for worker in workers %}
+						<tr onclick="open_modal(this)">
+							<td>{{ worker.id }}</td>
+							<td>{{ worker.first_name }} {{ worker.last_name }}</td>
+							<td>{{ worker.username }}</td>
+							<td>{{ worker.email }}</td>
+							<td>{{ worker.date_joined|date:"d-m-Y" }}</td>
+							<td>{% if worker.last_login.date == localdate %} Сьогодні о
+								{% elif worker.last_login %}{{ worker.last_login|date:"d-m-Y" }}
+								{% else %}Не входив
+								{% endif %} {{ worker.last_login|time:"H:i" }}</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</main>
+			<footer>
+				<p>
+					Copyright © 2023 Іван Ляля. Всі права захищені.<br>
+					Підтримка: <a href="mailto:lyalyaivan2004@gmail.com">lyalyaivan2004@gmail.com</a>
+				</p>
+			</footer>
+		</div>
+		<div id="employee_modal" hidden>
+			<div id='modal_header'>
+				Працівник № <span id='employee_id'></span>
+				<button id='close_button'>&times;</button>
+			</div>
+			<div id='modal_body'>
+				<aside>
+					<p id="date_joined_p">Дата приєднання:<br><span id='date_joined'></span></p>
+					<p id="last_login_p">Останній вхід:<br><span id='last_login'></span></p>
+					<p id="password_p">Вигадайте надійний пароль:<br><span id="password" class="editable" contenteditable="true"></span></p>
+				</aside>
+				<p>Ім'я:&nbsp;<span id='first_name'></span></p>
+				<p>Прізвище:&nbsp;<span id='last_name'></span></p>
+				<p>Логін:&nbsp;<span id='username'></span></p>
+				<p>Email:&nbsp;<span id='email'></span></p>
+				<button id='employee_green' class='modal_button'></button>
+				<button id='edit_employee' class='modal_button'>Редагувати дані</button>
+				<button id='employee_red' class='modal_button'></button>
+			</div>
+		</div>
+	</body>
+</html>

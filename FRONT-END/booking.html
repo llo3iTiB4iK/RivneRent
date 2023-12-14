@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="uk">
+	<head>
+		{% load static %}
+		<meta name="author" content="Ляля Іван">
+		<title>Оформлення оренди</title>
+		<link rel="icon" href="{% static 'materials/icon.png' %}">
+		<link rel="stylesheet" href="{% static 'styles.css' %}">
+    	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+		<script src="{% static 'formFill.js' %}"></script>
+	</head>
+	<body id="booking_page">
+		<header>
+			<h1>
+				<img src="{% static 'materials/icon.png' %}"> RivneRent - сервіс оренди автомобілів у м.Рівне
+				<a href="login.html" id="log_in"><img src="{% static 'materials/login.png' %}" alt="Увійти"></a>
+			</h1>
+			<nav>
+				<a href="index.html">Головна</a>
+				<a href="cars.html">Перелік авто</a>
+				<a href="rules.html">Правила та умови</a>
+				<a href="about_us.html">Про нас</a>
+				<span id='schedule'>09:00-21:00</span>
+			</nav>
+		</header>
+		<main>
+			<form id="Form" onsubmit='return false' onmouseover="this.classList.add('mouse_over_form');">
+				{% csrf_token %}
+				<h2>Бронювання</h2>
+				<label for="full_name">*Прізвище, ім'я та по-батькові:</label>
+				<input type="text" name="full_name" id="full_name" required="required" placeholder="Іванов Іван Іванович" maxlength="200" onblur="validateFullName(this)">
+				<br><span id="incorrect_name" class="incorrect_input-hint" hidden>Перевірте правильність вводу ПІБ</span>
+				<label for="email">Email:</label>
+				<input type="email" name="email" id="email" placeholder="ваш_email@example.com" maxlength="320">
+				<label for="tel">*Номер телефону:</label>
+				<input type="text" value="+380" name="tel" id="tel" minlength="13" maxlength="13" required="required" oninput="formatPhoneNumber(this)" onblur="getDiscount();">
+				<br><span id="incorrect_phone" class="incorrect_input-hint" hidden>Перевірте правильність вводу номера</span>
+				<label for="my_select">*Оберіть авто, яке бажаєте орендувати:</label>
+				<select name="list" id="my_select" required="required" onchange="processCarSelection()">
+					{% if cars %}
+						<option disabled selected value> - оберіть авто зі списку - </option>
+						{% for car in cars %}
+							<option value="{{ car.image }}" data-id="{{ car.id }}" data-dates_to_disable="{{ car.dates_to_disable }}" data-prices="{{ car.prices }}">{{ car.make }} {{ car.model }} ({{ car.year }})</option>
+						{% endfor %}
+					{% else %}
+						<option disabled selected>Немає доступних авто, вибачте за незручності</option>
+					{% endif %}
+				</select>
+				<img src="" title="Обране авто" id="selected_car_img">
+				<label for="datepicker">*Вкажіть дату отримання авто:</label>
+				<input type="text" name="datetime" id='datepicker' required="required" placeholder='Оберіть авто спочатку' autocomplete="off" disabled onchange="validatePeriod()">
+				<br><span id="incorrect_date" class="incorrect_input-hint" hidden>Вкажіть дату у форматі рррр-мм-дд або виберіть її у спливаючому вікні.</span>
+				<label for="period">*Вкажіть термін оренди авто (діб):</label>
+				<input type="number" name="period" id="period" min=1 max=89 placeholder="Від 1 до 89" required="required" onchange="validatePeriod()" oninput="calculatePrice()">
+				<br><span id="incorrect_period" class="incorrect_input-hint" hidden>Вкажіть менший період прокату або змініть дату отримання авто.</span>
+				<div id='additional'>
+					<label for="gps" class='unneccessary'>
+						<input type="checkbox" name="gps" id="gps" onchange="calculatePrice()"> GPS-навігатор <b>200грн/доба</b>
+					</label>
+					<label for="childseat" class='unneccessary'>
+						<input type="checkbox" name="childseat" id="childseat" onchange="calculatePrice()"> Дитяче автокрісло <b>200грн/доба</b>
+					</label>
+					<label for="delivery" class='unneccessary'>
+						<input type="checkbox" name="delivery" id="delivery" onchange="calculatePrice()"> Доставка(м.Рівне±10км) і підбір автомобіля <b>400грн</b>
+					</label>					
+				</div>
+				<label for="accept">
+					<input type="checkbox" name="accept" id="accept" required='required'>
+					*Я ознайомився з 
+					<a href="rules.html#rules_n_terms" target="_blank">правилами та умовами</a> 
+				сервісу</label>
+				<input type="submit" value="Забронювати" id="submit_btn">	
+			</form>
+			<div id='prices'>
+				<p>Всього <span id='calculated_price'>0</span> грн</p>
+				<p hidden>(зі знижкою <span id='discount'></span>%)</p>
+				<p id="notice"></p>
+				<p>Застава: <span id='mortgage'>0</span> грн</p>
+			</div>
+		</main>
+		<footer>
+			<p>
+				Copyright © 2023 Іван Ляля. Всі права захищені.<br>
+				Підтримка: <a href="mailto:lyalyaivan2004@gmail.com">lyalyaivan2004@gmail.com</a>
+			</p>
+    	</footer>
+    	<script>
+			let personal_discount;
+			let discount_;
+
+    		// встановлення мінімальної дати вибору в календарі
+			window.addEventListener('DOMContentLoaded', function (){
+				const today = new Date().toLocaleString('en-US', { timeZone: 'Europe/Kiev' });
+				let currentDate = new Date(today);
+				if (currentDate.getHours() >= 20) {
+					currentDate.setDate(currentDate.getDate() + 1);
+				}
+				const minDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+				// налаштування об'єкта datepicker
+				$("#datepicker").datepicker({
+					minDate: minDate,
+					dateFormat: 'yy-mm-dd'
+				});
+				if (sessionStorage.getItem('chosen_car_id')){
+					let car_available = false;
+					Array.from(my_select.options).forEach(car => {
+						if (car.dataset.id === sessionStorage.getItem('chosen_car_id')) {
+							car.selected = true;
+							processCarSelection(selected=car, store=false);
+							car_available = true;
+						}
+					})
+					if (!car_available){
+						window.alert('На жаль, обране Вами авто більше не доступне для прокату! Оберіть інше!');
+						sessionStorage.removeItem('chosen_car_id');
+						my_select.selectedIndex = 0;
+					}
+				}
+				getDiscount(blank_allowed=true);
+			})
+
+			window.addEventListener('load', function (){
+				if (!sessionStorage.getItem('booking_rules_shown')){
+					window.alert("В робочий час (09:00-21:00) з Вами зв'яжуться наші менеджери за номером телефону, вказаним у формі. Якщо бронювання НЕ буде підтверджено протягом 24 годин, воно буде АВТОМАТИЧНО ВІДХИЛЕНЕ.");
+					sessionStorage.setItem('booking_rules_shown', 'true');
+				}
+			})
+
+    		// функція вимкнення конкретних дат
+    		function disable_dates(disabledDates){
+    			$("#datepicker").datepicker("option", "beforeShowDay", function(date) {
+			        var stringDate = $.datepicker.formatDate('yy-mm-dd', date);
+			        var isDisabled = (disabledDates.indexOf(stringDate) !== -1);
+			        return [!isDisabled];
+			    });
+    		}
+
+			// Функція обробки вибору певного авто
+			function processCarSelection(selected=my_select.options[my_select.selectedIndex], store=true){
+				selected_car_img.src = selected.value;
+				selected_car_img.style.display = 'block';
+				if (store) {
+					sessionStorage.setItem('chosen_car_id', selected.dataset.id);
+				}
+				calculatePrice();
+				disable_dates(selected.dataset.dates_to_disable.split(','));
+				datepicker.disabled = false;
+				datepicker.placeholder = 'Оберіть дату з доступних';
+				datepicker.value = '';
+			}
+
+			//валідація та відправка форми на сервер
+  			Form.addEventListener('submit', function() {
+				if (!(validateFullName(full_name, scroll=Form) && validatePhoneNumber(tel, scroll=full_name) && validatePeriod())){
+					return;
+				}
+				fetch('captcha/', {method: 'GET'})
+				.then(response => response.json())
+				.then(data => {
+					const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+					const userInput = window.prompt(`${data.captcha} = ?`);
+					fetch(`captcha/?user_answer=${userInput}`, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json',
+							'X-CSRFToken': csrftoken
+						},
+					})
+					.then(response => response.json())
+					.then(data => {
+						if (data.success){
+							fetch('make_booking/', {
+								method: 'POST',
+								headers: {
+									'Content-Type': 'application/json',
+									'X-CSRFToken': csrftoken
+								},
+								body: JSON.stringify({
+									full_name: full_name.value,
+									email: email.value,
+									phone_number: tel.value,
+									acquisition_date: datepicker.value,
+									rental_term: period.value,
+									car_id: sessionStorage.getItem('chosen_car_id'),
+									gps: gps.checked,
+									child_seat: childseat.checked,
+									delivery: delivery.checked
+								}),
+							})
+							.then(response => {
+								response.json()
+									.then(data => {
+										alert(data.message);
+										if (response.status === 200) {
+											window.location.href = 'index.html';
+										} else if (data.car_unavailable) {
+											sessionStorage.removeItem('chosen_car_id');
+											my_select.selectedIndex = 0;
+											location.reload();
+										} else if (data.date_unavailable) {
+											location.reload();
+										} else if (data.validation_error) {
+											console.log(data.validation_error);
+										}
+									})
+							})
+							.catch(error => {
+								window.alert("Виникли проблеми при спробі встановити зв'язок з сервером. Вибачте за тимчасові незручності!");
+							});
+						} else {
+							window.alert("Ви ввели неправильну відповідь. Щоб підтвердити що Ви не робот, введіть правильну відповідь!")
+						}
+					})
+					.catch(error => {
+						window.alert("Виникли проблеми при спробі встановити зв'язок з сервером. Вибачте за тимчасові незручності!");
+					})
+				})
+				.catch(error => {
+					window.alert("Виникли проблеми при спробі встановити зв'язок з сервером. Вибачте за тимчасові незручності!");
+				})
+			});
+
+			// Функція обчислення ціни прокату та задатку
+			function calculatePrice(period=Form.period.value, prices=my_select.options[my_select.selectedIndex].dataset.prices) {
+				let price_per_day;
+				if (prices){
+					prices = JSON.parse(prices);
+					price_per_day = Number(gps.checked)*200 + Number(childseat.checked)*200;
+					if (period >= 1 && period <= 3){
+						price_per_day += prices.daily_1to3;
+					} else if (period >= 4 && period <= 9){
+						price_per_day += prices.daily_4to9;
+					} else if (period >= 10 && period <= 25){
+						price_per_day += prices.daily_10to25;
+					} else if (period >= 26 && period <= 89){
+						price_per_day += prices.daily_26to89;
+					} else {
+						price_per_day = 0;
+					}
+					mortgage.textContent = prices.mortgage;
+				}
+		        const price = price_per_day ? period * price_per_day + Number(delivery.checked)*400 : 0;
+		        calculated_price.textContent = price ? price : 0;
+		        if (personal_discount){
+			        discount.textContent = personal_discount;
+			        if (personal_discount == 100){
+			        	if (price > 10000){
+                			notice.innerHTML = `*Ви не можете скористатися безкоштовним прокатом, оскільки вартість прокату без знижки становить ${price} грн, що перевищує <br><b>10000 грн!</b>`;
+                			discount.textContent = discount_;
+                			calculated_price.textContent = price*(1-(discount_/100));
+			        	} else if (price === 0){
+			        		notice.innerHTML = `*До кінця року Ви можете скористатися безкоштовним прокатом на суму не більше<br>10000 грн!`;
+			        	} else {
+			        		notice.innerHTML = `Цей прокат на суму <br>${calculated_price.textContent} грн є безкоштовним для Вас як нашого постійного клієнта!`;
+                			calculated_price.textContent = '0';
+			        	}
+			        } else {
+                		calculated_price.textContent = price*(1-(personal_discount/100));
+			        }
+                }
+			}
+
+			// Функція отримання знижки
+			function getDiscount(blank_allowed=false){
+			    notice.innerHTML = '';
+			    discount.closest("p").hidden = true;
+			    personal_discount = 0;
+			    if (!validatePhoneNumber(tel, false, blank_allowed=blank_allowed)){
+			    	calculatePrice();
+			    	return;
+			    }
+				fetch(`discount/?phone_number=${tel.value}`, {
+			        method: 'GET',
+			        headers: {
+			            'Accept': 'application/json',
+			        },
+			    })
+			    .then(response => {
+			        if (response.status === 200) {
+			            response.json()
+			            .then(data => {
+			            	if (data.discount !== 0){
+			            		personal_discount = data.discount;            		
+			                	discount.closest("p").hidden = false;
+						        if (data.discount == 100){
+						        	discount_ = data.discount_;
+						        }
+			                }
+			                calculatePrice();
+			            })
+			        } else {
+			        	alert('Помилка при спробі отримати персональну знижку за вказаним номером телефону!');
+			        	calculatePrice();
+			        }
+			    })
+			    .catch(error => {
+			        window.alert("Виникли проблеми при спробі встановити зв'язок з сервером. Вибачте за тимчасові незручності!");
+			    });
+			}
+    	</script>
+	</body>
+</html>

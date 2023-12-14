@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="uk">
+	<head>
+		{% load static %}
+		<meta name="author" content="Ляля Іван">
+		<title>Перелік авто</title>
+		<link rel="icon" href="{% static 'materials/icon.png' %}">
+		<link rel="stylesheet" href="{% static 'styles.css' %}">
+	</head>
+	<body id="auto_list_page">
+		<header>
+			<h1>
+				<img src="{% static 'materials/icon.png' %}"> RivneRent - сервіс оренди автомобілів у м.Рівне
+				<a href="login.html" id="log_in"><img src="{% static 'materials/login.png' %}"></a>
+			</h1>
+			<nav>
+				<a href="index.html">Головна</a>
+				<a href="#list" class="current_page">Перелік авто</a>
+				<a href="rules.html">Правила та умови</a>
+				<a href="about_us.html">Про нас</a>
+				<button type="button" id="rental-btn" onclick='window.location.href="booking.html"'>Бронювання</button>
+				<span id='schedule'>09:00-21:00</span>
+			</nav>
+		</header>
+		<main>
+			<a name="list"></a>
+			<h2>Ми пропонуємо до оренди наступні автомобілі:</h2>	
+			<table id="filters" align='center' bgcolor='white' width='75%' border='1' cellpadding='10'>
+			    <tr>
+			    	<td id='filter_selected'>Всі авто</td>
+			    	<td>Бюджетні</td>
+			    	<td>Комфорт</td>
+			    	<td>Кросовери</td>
+			    	<td>Бізнес</td>
+			    	<td>Спорт</td>
+			    	<td>Преміум 4х4</td>
+			    </tr>
+			</table>
+			<ul id="auto_list">
+				{% for car in cars %}
+				<li data-id="{{ car.id }}" data-category="{{ car.get_category_display }}">
+					<p>{{ car.make }} {{ car.model }} ({{ car.year }})
+						<button class="book_this_car">Забронювати це авто &gt;</button>
+					</p>
+					<img src="{{ car.image.url }}" class="shadowed{% if forloop.counter|divisibleby:2 %} to_right_side{% endif %}">
+					<div class="specifications" onclick="event.stopPropagation()">
+						<table width="38%" class="characteristics">
+							<tbody><tr>
+								<td>
+									<img src="{% static 'car_specifications/engine.svg' %}" class="specifications_icon">
+									<p>{{ car.features.engine_size }} л</p>
+								</td>
+								<td>
+									<img src="{% static 'car_specifications/fuel.svg' %}" class="specifications_icon">
+									<p>{{ car.features.get_fuel_type_display }}</p>
+								</td>
+								<td>
+									<img src="{% static 'car_specifications/transmission.svg' %}" class="specifications_icon">
+									<p>{{ car.features.get_gearbox_display }}</p>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<img src="{% static 'car_specifications/passenger.svg' %}" class="specifications_icon">
+									<p>{{ car.features.seats }} людей</p>
+								</td>
+								<td>
+									<img src="{% static 'car_specifications/conditioner.svg' %}" class="specifications_icon">
+									<p>{{ car.features.get_conditioner_display }}</p>
+								</td>
+								<td>
+									<img src="{% static 'car_specifications/fuel consumption.svg' %}" class="specifications_icon">
+									<p>{{ car.features.fuel_consumption }} л/100км</p>
+								</td>
+							</tr>
+						</tbody></table>
+						<table class="prices_for_car">
+							<tbody>
+								<tr bgcolor="#0057b7" class="white_text">
+									<td>Період</td>
+									<td>1-3 діб</td>
+									<td>4-9 діб</td>
+									<td>10-25 діб</td>
+									<td>26-89 діб</td>
+									<td>Завдаток <button class="question_button" onclick="alert('* На час дії договору про оренду необхідно внести відповідну заставу, яка буде повернена клієнтові в 100% обсязі за умови, що умови договору не були порушені.')">?</button></td>
+								</tr>
+								<tr bgcolor="#ffd700">
+									<td>Ціна за добу</td>
+									<td>{{ car.prices.daily_1to3 }} грн</td>
+									<td>{{ car.prices.daily_4to9 }} грн</td>
+									<td>{{ car.prices.daily_10to25 }} грн</td>
+									<td>{{ car.prices.daily_26to89 }} грн</td>
+									<td>{{ car.prices.mortgage }} грн</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</li>
+				{% endfor %}
+			</ul>
+		</main>
+		<footer>
+			<p>
+				Copyright © 2023 Іван Ляля. Всі права захищені.<br>
+				Підтримка: <a href="mailto:lyalyaivan2004@gmail.com">lyalyaivan2004@gmail.com</a>
+			</p>
+    	</footer>
+    	<script>
+			document.addEventListener('DOMContentLoaded', function() {
+				// Перехід на сторінку автомобіля х при натисканні на відповідний автомобіль в списку
+				auto_list.querySelectorAll('li').forEach(function(item){
+					item.addEventListener('click', function(event) {
+						event.stopPropagation();
+						var text = item.textContent.trim();
+						var brandModelYear = text.substring(0, text.indexOf(')')).split(' ');
+						brandModelYear[brandModelYear.length-1] = brandModelYear[brandModelYear.length-1].substring(1, 5)
+						window.location.href = `cars/${item.dataset.id}_${brandModelYear.join('_')}.html`;
+					})
+				});
+
+				// Перехід на сторінку бронювання з обраним авто х при натисканні на кнопку бронювання біля відповідного авто
+				auto_list.querySelectorAll('button.book_this_car').forEach(function(book_button){
+					book_button.addEventListener('click', function(event){
+						event.stopPropagation()
+						sessionStorage.setItem("chosen_car_id", event.target.closest('li').dataset.id);
+						window.location.href = 'booking.html';
+					})
+				});
+
+				// Фільтрація автомобілів за категорією
+				filters.addEventListener('click', function(event){
+					if (event.target.tagName !== 'TD'){
+						return;
+					}
+					filter_selected.id = '';
+					event.target.id = 'filter_selected';
+					const selectedCategory = event.target.textContent;
+					const filteredCategory = (selectedCategory === 'Всі авто') ? null : selectedCategory;
+					auto_list.querySelectorAll('li').forEach(li => {
+						const category = li.dataset.category;
+						li.hidden = !(!filteredCategory || category === filteredCategory);
+					});
+				})
+			});
+    	</script>
+	</body>
+</html>

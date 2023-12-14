@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="uk">
+	<head>
+		{% load static %}
+		<meta name="author" content="Ляля Іван">
+		<title>Архів</title>
+		<link rel="icon" href="{% static 'materials/icon.png' %}">
+		<link rel="stylesheet" href="{% static 'styles.css' %}">
+		<script src="{% static 'getBookings.js' %}"></script>
+	</head>
+	<body id="archive_page" onload="getBookings()">
+		<div id='page_content'>
+			<header>
+				<h1>
+					<img src="{% static 'materials/icon.png' %}"> RivneRent - сервіс оренди автомобілів у м.Рівне
+					<a href="login.html" id="log_in"><img src="{% static 'materials/login.png' %}"></a>
+				</h1>
+				<nav>
+					<a href="index.html">Головна</a>
+					<a href="cars.html">Перелік авто</a>
+					<a href="rules.html">Правила та умови</a>
+					<a href="about_us.html">Про нас</a>
+				</nav>
+			</header>
+			<main>
+				<table align="center" width="90%"><tr>
+					<td width="20%"><select name="status" id="status" onchange="filter()">
+					    <option id='status_selected' selected>Усі</option>
+					    <option>Нові</option>
+					    <option>Потребують підтвердження</option>
+					    <option>Підтверджені</option>
+					    <option>Відхилені</option>
+					    <option>Отримання сьогодні</option>
+					    <option>Прокат зірваний</option>
+					    <option>В прокаті</option>
+					    <option>Повернення сьогодні</option>
+					    <option>Прокат успішний</option>
+					</select></td>
+					<td width="60%"><h2>Архів бронювань</h2></td>
+					<td width="20%"><div id="search_container">
+						<input type="text" name="search" id="search" placeholder="Пошук за номером" oninput="filter()">
+						<img src="{% static 'materials/search.png' %}" height="35.2px" id="search_icon">
+					</div></td>
+				</tr></table>
+				<table id="bookings" align="center" bgcolor="white" cellpadding="15" cellspacing="0">
+					<thead>
+						<tr>
+							<td class="id_width">№</td>
+							<td>ПІБ</td>
+							<td>Телефон</td>
+							<td class="max_content_width">Дата оренди</td>
+							<td class="max_content_width">Термін оренди</td>
+							<td>Авто</td>
+							<td>Статус</td>
+						</tr>
+					</thead>
+					<tbody id="bookings_list"></tbody>
+				</table>
+			</main>
+			<footer>
+				<p>
+					Copyright © 2023 Іван Ляля. Всі права захищені.<br>
+					Підтримка: <a href="mailto:lyalyaivan2004@gmail.com">lyalyaivan2004@gmail.com</a>
+				</p>
+	    	</footer>
+	    </div>
+	    <div id='bookings_modal'>
+			<div id='modal_header'>
+				Бронювання № <span id='booking_id'></span>&nbsp;(<span id='booking_status'></span>)
+				<button id='close_button' onclick="close_modal()">&times;</button>
+			</div>
+			<div id='modal_body'>
+				<aside>
+					<p>Сума до оплати:<br><span id='price'></span></p>
+					<p>Знижка:<br><span id='discount'></span></p>
+					<p>Задаток:<br><span id='mortgage'></span></p>
+					<p>Додаткові послуги:<br>
+						<span id='gps'></span>
+						<span id='child_seat'></span>
+						<span id='delivery'></span>
+					</p>
+					<p>Коментар:<br><span id='comment'></span></p>
+				</aside>
+				<p>Бронювання здійснене: <span id='creation_time'></span></p>
+				<p>Повне ім'я клієнта: <span id='full_name'></span></p>
+				<p>Номер телефону: <span id='phone_number'></span></p>
+				<p>Email: <span id='email'></span></p>
+				<p>Автомобіль: <span id='car'></span></p>
+				<p>Дата отримання авто: <span id='acquisition_date'></span></p>
+				<p>Термін прокату: <span id='rental_term'></span></p>
+				<p>Бронювання підтверджено: <span id='confirmed_by'></span></p>
+			</div>
+		</div>
+	</body>
+</html>

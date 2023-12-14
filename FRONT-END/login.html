@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="uk">
+	<head>
+		{% load static %}
+		<meta name="author" content="Ляля Іван">
+		<title>Вхід</title>
+		<link rel="icon" href="{% static 'materials/icon.png' %}">
+		<link rel="stylesheet" href="{% static 'styles.css' %}">
+	</head>
+	<body id="auth_page">
+		<header>
+			<h1><img src="{% static 'materials/icon.png' %}"> RivneRent - сервіс оренди автомобілів у м.Рівне</h1>
+			<nav>
+				<a href="index.html">Головна</a>
+				<a href="cars.html">Перелік авто</a>
+				<a href="rules.html">Правила та умови</a>
+				<a href="about_us.html">Про нас</a>
+			</nav>
+		</header>
+		<main>
+			<form id="sign_in_form" onmouseover="this.classList.add('mouse_over_form');">
+				{% csrf_token %}
+				<h2>Авторизація</h2>
+				<label for="username">Логін:</label>
+			    <input type="text" name="username" id="username" required><br>
+			    <label for="password">Пароль:</label>
+			    <input type="password" name="password" id="password" required><br>
+			    <input type="submit" value="Увійти" id="submit_btn">
+			</form>
+		</main>
+		<footer>
+			<p>
+				Copyright © 2023 Іван Ляля. Всі права захищені.<br>
+				Підтримка: <a href="mailto:lyalyaivan2004@gmail.com">lyalyaivan2004@gmail.com</a>
+			</p>
+    	</footer>
+  		<script>
+  			// перевірка чи є користувач вже авторизованим в системі
+			window.addEventListener('pageshow', function() {
+			    const authToken = sessionStorage.getItem('rivnerent_auth_token');
+			    if (authToken) {
+			        fetch(`login/`, {
+			            method: 'GET',
+			            headers: {
+				            'Authorization': `Bearer ${authToken}`,
+				        }
+			        })
+			        .then(response => response.json())
+			        .then(data => {
+			            if (data.authorized){
+			            	redirect(data.role, token=authToken);
+			            }
+			        })
+			        .catch(error => {
+			            window.alert('Не вдалося перевірити сесію авторизації. Введіть свій логін та пароль або спробуйте пізніше.');
+			        });
+			    }
+			});
+
+  			// відправка логіна та пароля на сервер та обробка входу
+  			sign_in_form.addEventListener('submit', function(e) {
+  				e.preventDefault();
+				const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+		        fetch('login/', {
+		            method: 'POST',
+		            headers: {
+		                'Content-Type': 'application/json',
+						'X-CSRFToken': csrftoken
+		            },
+		            body: JSON.stringify({
+		                username: sign_in_form.username.value,
+		                password: sign_in_form.password.value
+		            })
+		        })
+		        .then(response => response.json())
+		        .then(data => {
+		            if (data.message === 'Успішний вхід') {
+		            	sessionStorage.setItem('rivnerent_auth_token', data.token);
+		                redirect(data.role, data.token);
+		            } else {
+		                alert(data.message);
+		            }
+		        })
+		        .catch(error => {
+		            window.alert("Виникли проблеми при спробі встановити зв'язок з сервером. Вибачте за тимчасові незручності!");
+		        });
+			})
+
+  			// перенаправлення користувача на потрібну сторінку в залежності від ролі
+  			function redirect(role, token){
+  				if (role === 'admin'){
+  					window.location.href=`administration.html?token=${token}`;
+  				} else{
+                	window.location.href='bookings.html';
+                }
+			}
+  		</script>
+	</body>
+</html>
