@@ -106,39 +106,37 @@
 			</p>
     	</footer>
     	<script>
-			document.addEventListener('DOMContentLoaded', function() {
-				// Перехід на сторінку автомобіля х при натисканні на відповідний автомобіль в списку
-				auto_list.querySelectorAll('li').forEach(function(item){
-					item.addEventListener('click', function(event) {
-						event.stopPropagation();
-						var text = item.textContent.trim();
-						var brandModelYear = text.substring(0, text.indexOf(')')).split(' ');
+			document.addEventListener('DOMContentLoaded', function() { // when the page is loaded
+				auto_list.querySelectorAll('li').forEach(function(item){ // for each car in the list
+					item.addEventListener('click', function(event) { // add processing of clicking on this car
+						event.stopPropagation(); // stop propagation of event so that another event listeners didn't work
+						// distinguish brand, model and year of the car and redirect user to this car's page
+						const text = item.textContent.trim();
+						let brandModelYear = text.substring(0, text.indexOf(')')).split(' ');
 						brandModelYear[brandModelYear.length-1] = brandModelYear[brandModelYear.length-1].substring(1, 5)
 						window.location.href = `cars/${item.dataset.id}_${brandModelYear.join('_')}.html`;
 					})
 				});
 
-				// Перехід на сторінку бронювання з обраним авто х при натисканні на кнопку бронювання біля відповідного авто
-				auto_list.querySelectorAll('button.book_this_car').forEach(function(book_button){
-					book_button.addEventListener('click', function(event){
-						event.stopPropagation()
-						sessionStorage.setItem("chosen_car_id", event.target.closest('li').dataset.id);
-						window.location.href = 'booking.html';
+				auto_list.querySelectorAll('button.book_this_car').forEach(function(book_button){ // for each "Book this car" button
+					book_button.addEventListener('click', function(event){ // add processing of clicking on this button
+						event.stopPropagation(); // stop propagation of event so that another event listeners didn't work
+						sessionStorage.setItem("chosen_car_id", event.target.closest('li').dataset.id); // set the user's chosen car id in sessionStorage
+						window.location.href = 'booking.html'; // redirect user on the page of booking
 					})
 				});
 
-				// Фільтрація автомобілів за категорією
-				filters.addEventListener('click', function(event){
-					if (event.target.tagName !== 'TD'){
+				filters.addEventListener('click', function(event){ // add processing of clicking on the filters by category
+					if (event.target.tagName !== 'TD'){ // if user didn't click on any cell, don't do anything
 						return;
 					}
-					filter_selected.id = '';
-					event.target.id = 'filter_selected';
-					const selectedCategory = event.target.textContent;
-					const filteredCategory = (selectedCategory === 'Всі авто') ? null : selectedCategory;
-					auto_list.querySelectorAll('li').forEach(li => {
-						const category = li.dataset.category;
-						li.hidden = !(!filteredCategory || category === filteredCategory);
+					filter_selected.id = ''; // unset the id of filter selected before
+					event.target.id = 'filter_selected'; // set the id of selected filter
+					const selectedCategory = event.target.textContent; // distinguish car category from the element clicked
+					const filteredCategory = (selectedCategory === 'Всі авто') ? null : selectedCategory; // create a variable that is null if user wants to see all the cars
+					auto_list.querySelectorAll('li').forEach(li => { // for each car in list
+						const category = li.dataset.category; // get car's category
+						li.hidden = !(!filteredCategory || category === filteredCategory); // hide or show car depending on user's chosen filter
 					});
 				})
 			});

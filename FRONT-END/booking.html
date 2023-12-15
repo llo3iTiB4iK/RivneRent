@@ -87,32 +87,32 @@
 			</p>
     	</footer>
     	<script>
-			let personal_discount;
-			let discount_;
+			let personal_discount; // personal discount percentage
+			let discount_; // if personal discount is 100, but the price of rental exceeds 10000, discount is recalculated
 
-    		// встановлення мінімальної дати вибору в календарі
-			window.addEventListener('DOMContentLoaded', function (){
+    		window.addEventListener('DOMContentLoaded', function (){ // when the page content is loaded
+				// set minimal date as today's date, or tomorrow's date if it's more than 8 pm.
 				const today = new Date().toLocaleString('en-US', { timeZone: 'Europe/Kiev' });
 				let currentDate = new Date(today);
 				if (currentDate.getHours() >= 20) {
 					currentDate.setDate(currentDate.getDate() + 1);
 				}
 				const minDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
-				// налаштування об'єкта datepicker
+				// setting up the datepicker object
 				$("#datepicker").datepicker({
 					minDate: minDate,
 					dateFormat: 'yy-mm-dd'
 				});
-				if (sessionStorage.getItem('chosen_car_id')){
-					let car_available = false;
-					Array.from(my_select.options).forEach(car => {
-						if (car.dataset.id === sessionStorage.getItem('chosen_car_id')) {
-							car.selected = true;
+				if (sessionStorage.getItem('chosen_car_id')){ // if any car is preferred by customer
+					let car_available = false; // this variable defines whether preferred car can be re rented
+					Array.from(my_select.options).forEach(car => { // for each car from options
+						if (car.dataset.id === sessionStorage.getItem('chosen_car_id')) { // if this car is one that customer prefers
+							car.selected = true; // select this in list
 							processCarSelection(selected=car, store=false);
-							car_available = true;
+							car_available = true; // mark the preferred car as the one that can be rented
 						}
 					})
-					if (!car_available){
+					if (!car_available){ // if the preferred car cannot be rented, alert the user and removed this car from sessionStorage
 						window.alert('На жаль, обране Вами авто більше не доступне для прокату! Оберіть інше!');
 						sessionStorage.removeItem('chosen_car_id');
 						my_select.selectedIndex = 0;
@@ -121,46 +121,55 @@
 				getDiscount(blank_allowed=true);
 			})
 
-			window.addEventListener('load', function (){
+			window.addEventListener('load', function (){ // when the window is loaded, show booking rules and mark them as shown
 				if (!sessionStorage.getItem('booking_rules_shown')){
 					window.alert("В робочий час (09:00-21:00) з Вами зв'яжуться наші менеджери за номером телефону, вказаним у формі. Якщо бронювання НЕ буде підтверджено протягом 24 годин, воно буде АВТОМАТИЧНО ВІДХИЛЕНЕ.");
 					sessionStorage.setItem('booking_rules_shown', 'true');
 				}
 			})
 
-    		// функція вимкнення конкретних дат
+    		/**
+			 * This function makes specific dates unable to be chosen in datepicker
+			 * @param disabledDates - array, list of dates to be disabled
+			 */
     		function disable_dates(disabledDates){
-    			$("#datepicker").datepicker("option", "beforeShowDay", function(date) {
-			        var stringDate = $.datepicker.formatDate('yy-mm-dd', date);
-			        var isDisabled = (disabledDates.indexOf(stringDate) !== -1);
-			        return [!isDisabled];
+    			$("#datepicker").datepicker("option", "beforeShowDay", function(date) { // for each date
+					const stringDate = $.datepicker.formatDate('yy-mm-dd', date); // convert date to formatted string
+					const isDisabled = (disabledDates.indexOf(stringDate) !== -1); // check if the date must be disabled
+					return [!isDisabled]; // disable date if in list
 			    });
     		}
 
-			// Функція обробки вибору певного авто
+			/**
+			 * This function performs all the needed actions that must be performed on the page after the car is selected
+			 * @param selected - option HTML element, option in select, that contains customer's wanted car
+			 * @param store - boolean, defines whether the chosen car must be stored in sessionStorage
+			 */
 			function processCarSelection(selected=my_select.options[my_select.selectedIndex], store=true){
-				selected_car_img.src = selected.value;
-				selected_car_img.style.display = 'block';
-				if (store) {
-					sessionStorage.setItem('chosen_car_id', selected.dataset.id);
+				selected_car_img.src = selected.value; // set the source for car image that is shown when car selected
+				selected_car_img.style.display = 'block'; // show this image
+				if (store) { // if selected car must be stored
+					sessionStorage.setItem('chosen_car_id', selected.dataset.id); // store in sessionStorage
 				}
-				calculatePrice();
-				disable_dates(selected.dataset.dates_to_disable.split(','));
-				datepicker.disabled = false;
-				datepicker.placeholder = 'Оберіть дату з доступних';
-				datepicker.value = '';
+				calculatePrice(); // recalculate the price and discount
+				disable_dates(selected.dataset.dates_to_disable.split(',')); // disable the dates when chosen car is unavailable for rental
+				datepicker.disabled = false; // enable datepicker
+				datepicker.placeholder = 'Оберіть дату з доступних'; // change hint in datepicker field
+				datepicker.value = ''; // clear the value of picked date
 			}
 
-			//валідація та відправка форми на сервер
-  			Form.addEventListener('submit', function() {
+			Form.addEventListener('submit', function() { // assign the actions that are performed when the form is submitted
+				// if any validation is failed, stop submitting
 				if (!(validateFullName(full_name, scroll=Form) && validatePhoneNumber(tel, scroll=full_name) && validatePeriod())){
 					return;
 				}
+				// do fetch-request that gets a captcha-task from the server
 				fetch('captcha/', {method: 'GET'})
 				.then(response => response.json())
 				.then(data => {
-					const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
-					const userInput = window.prompt(`${data.captcha} = ?`);
+					const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value; // get the CSRF-token from the corresponding input
+					const userInput = window.prompt(`${data.captcha} = ?`); // ask user for the answer on the captcha
+					// do fetch-request to the server with user's answer that checks whether it is correct
 					fetch(`captcha/?user_answer=${userInput}`, {
 						method: 'POST',
 						headers: {
@@ -170,14 +179,15 @@
 					})
 					.then(response => response.json())
 					.then(data => {
-						if (data.success){
+						if (data.success){ // if captcha solved right
+							// do fetch-request to server that creates a new booking
 							fetch('make_booking/', {
 								method: 'POST',
 								headers: {
 									'Content-Type': 'application/json',
 									'X-CSRFToken': csrftoken
 								},
-								body: JSON.stringify({
+								body: JSON.stringify({ // form the object from user's inputs and convert object to json
 									full_name: full_name.value,
 									email: email.value,
 									phone_number: tel.value,
@@ -192,7 +202,8 @@
 							.then(response => {
 								response.json()
 									.then(data => {
-										alert(data.message);
+										alert(data.message); // show user a message from the server
+										// alert user and do further actions depending on server's response
 										if (response.status === 200) {
 											window.location.href = 'index.html';
 										} else if (data.car_unavailable) {
@@ -209,7 +220,7 @@
 							.catch(error => {
 								window.alert("Виникли проблеми при спробі встановити зв'язок з сервером. Вибачте за тимчасові незручності!");
 							});
-						} else {
+						} else { // if captcha solver wrong
 							window.alert("Ви ввели неправильну відповідь. Щоб підтвердити що Ви не робот, введіть правильну відповідь!")
 						}
 					})
@@ -222,12 +233,17 @@
 				})
 			});
 
-			// Функція обчислення ціни прокату та задатку
+			/**
+			 * This function calculates and shows the rental price and mortgage
+			 * @param period - number, car rental term
+			 * @param prices - string, json with prices for specific car
+			 */
 			function calculatePrice(period=Form.period.value, prices=my_select.options[my_select.selectedIndex].dataset.prices) {
-				let price_per_day;
-				if (prices){
-					prices = JSON.parse(prices);
-					price_per_day = Number(gps.checked)*200 + Number(childseat.checked)*200;
+				let price_per_day; // variable that stands for daily price of rental
+				if (prices){ // if prices for specific car are defined
+					prices = JSON.parse(prices); // convert them to object
+					price_per_day = Number(gps.checked)*200 + Number(childseat.checked)*200; // initialize price per day as price of gps and child seat checked
+					// add daily price of car rental depending on rental term
 					if (period >= 1 && period <= 3){
 						price_per_day += prices.daily_1to3;
 					} else if (period >= 4 && period <= 9){
@@ -236,16 +252,17 @@
 						price_per_day += prices.daily_10to25;
 					} else if (period >= 26 && period <= 89){
 						price_per_day += prices.daily_26to89;
-					} else {
+					} else { // if period is not defined, rental price per day is 0
 						price_per_day = 0;
 					}
-					mortgage.textContent = prices.mortgage;
+					mortgage.textContent = prices.mortgage; // fill the mortgage text
 				}
-		        const price = price_per_day ? period * price_per_day + Number(delivery.checked)*400 : 0;
-		        calculated_price.textContent = price ? price : 0;
-		        if (personal_discount){
-			        discount.textContent = personal_discount;
+		        const price = price_per_day ? period * price_per_day + Number(delivery.checked)*400 : 0; // calculate summary price if price per day is not 0
+		        calculated_price.textContent = price ? price : 0; // fill the rental price text
+		        if (personal_discount){ // if there is personal discount by given phone number
+			        discount.textContent = personal_discount; // fill the discount text
 			        if (personal_discount == 100){
+						// show different messages and calculate price depending on the price of rental
 			        	if (price > 10000){
                 			notice.innerHTML = `*Ви не можете скористатися безкоштовним прокатом, оскільки вартість прокату без знижки становить ${price} грн, що перевищує <br><b>10000 грн!</b>`;
                 			discount.textContent = discount_;
@@ -256,21 +273,27 @@
 			        		notice.innerHTML = `Цей прокат на суму <br>${calculated_price.textContent} грн є безкоштовним для Вас як нашого постійного клієнта!`;
                 			calculated_price.textContent = '0';
 			        	}
-			        } else {
+			        } else { // if personal discount is not 100, calculate price with discount
                 		calculated_price.textContent = price*(1-(personal_discount/100));
 			        }
                 }
 			}
 
-			// Функція отримання знижки
+			/**
+			 * This function gets the discount from server and shows it
+			 * @param blank_allowed - boolean, defines whether blank phone number will pass the validation for getting discount
+			 */
 			function getDiscount(blank_allowed=false){
+				// set default values for fields
 			    notice.innerHTML = '';
 			    discount.closest("p").hidden = true;
 			    personal_discount = 0;
+				// check if the phone number entered is valid
 			    if (!validatePhoneNumber(tel, false, blank_allowed=blank_allowed)){
 			    	calculatePrice();
 			    	return;
 			    }
+				// do fetch-request to server that gets the personal discount by given phone number
 				fetch(`discount/?phone_number=${tel.value}`, {
 			        method: 'GET',
 			        headers: {
@@ -281,16 +304,17 @@
 			        if (response.status === 200) {
 			            response.json()
 			            .then(data => {
-			            	if (data.discount !== 0){
+			            	if (data.discount !== 0){ // if there is a personal discount, fill the fields
 			            		personal_discount = data.discount;            		
 			                	discount.closest("p").hidden = false;
 						        if (data.discount == 100){
 						        	discount_ = data.discount_;
 						        }
 			                }
+							// anyway recalculate the overall price
 			                calculatePrice();
 			            })
-			        } else {
+			        } else { // if server returned not OK - alert user and recalculate overall price
 			        	alert('Помилка при спробі отримати персональну знижку за вказаним номером телефону!');
 			        	calculatePrice();
 			        }

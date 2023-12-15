@@ -22,6 +22,7 @@
 					<a href="cars.html">Перелік авто</a>
 					<a href="rules.html">Правила та умови</a>
 					<a href="about_us.html">Про нас</a>
+					<a id="archive" href="archive.html?all=true" title="Перейти до архіву бронювань"><img src="{% static 'materials/archive.png' %}" height="55px"></a>
 				</nav>
 			</header>
 			<main>
@@ -33,7 +34,6 @@
 				    	<td>Повернення сьогодні ({{ today|date:"d.m" }})</td>
 				    </tr>				    
 				</table>
-				<a id="archive" href="archive.html?all=true" title="Перейти до архіву бронювань"><img src="{% static 'materials/archive.png' %}" height="60px"></a>
 				<table id='bookings' align='center' bgcolor='white' cellpadding='15' cellspacing="0">
 					<thead>
 						<tr>

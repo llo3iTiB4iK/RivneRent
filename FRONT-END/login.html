@@ -35,10 +35,11 @@
 			</p>
     	</footer>
   		<script>
-  			// перевірка чи є користувач вже авторизованим в системі
+  			// check whether the user is already authorized when the page is shown
 			window.addEventListener('pageshow', function() {
-			    const authToken = sessionStorage.getItem('rivnerent_auth_token');
+			    const authToken = sessionStorage.getItem('rivnerent_auth_token'); // get authorization token from sessionStorage
 			    if (authToken) {
+					// do fetch-request that checks authorization
 			        fetch(`login/`, {
 			            method: 'GET',
 			            headers: {
@@ -47,7 +48,7 @@
 			        })
 			        .then(response => response.json())
 			        .then(data => {
-			            if (data.authorized){
+			            if (data.authorized){ // if server returns the user as authorized, redirect user
 			            	redirect(data.role, token=authToken);
 			            }
 			        })
@@ -57,11 +58,12 @@
 			    }
 			});
 
-  			// відправка логіна та пароля на сервер та обробка входу
+  			// login processing when form is submitted
   			sign_in_form.addEventListener('submit', function(e) {
-  				e.preventDefault();
-				const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
-		        fetch('login/', {
+  				e.preventDefault(); // cancel default onsubmit action
+				const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value; // get CSRF-token from corresponding input
+		        // do fetch-request that authorizes or rejects user depending on entered username and password
+				fetch('login/', {
 		            method: 'POST',
 		            headers: {
 		                'Content-Type': 'application/json',
@@ -70,14 +72,14 @@
 		            body: JSON.stringify({
 		                username: sign_in_form.username.value,
 		                password: sign_in_form.password.value
-		            })
+		            }) // makes a JSON string from username and password values
 		        })
 		        .then(response => response.json())
 		        .then(data => {
-		            if (data.message === 'Успішний вхід') {
+		            if (data.message === 'Успішний вхід') { // authorize user is server returns ok
 		            	sessionStorage.setItem('rivnerent_auth_token', data.token);
 		                redirect(data.role, data.token);
-		            } else {
+		            } else { // alert user about failed authorization if server doesn't return ok
 		                alert(data.message);
 		            }
 		        })
@@ -86,7 +88,11 @@
 		        });
 			})
 
-  			// перенаправлення користувача на потрібну сторінку в залежності від ролі
+  			/**
+			 * This function redirects user depending on its role
+			 * @param role - String with user's role
+			 * @param token - String with user's authorization token
+			 */
   			function redirect(role, token){
   				if (role === 'admin'){
   					window.location.href=`administration.html?token=${token}`;

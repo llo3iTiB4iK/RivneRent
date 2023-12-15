@@ -337,7 +337,7 @@ form #submit_btn{
 .book_this_car:hover, .car_category:hover{
 	background-color: grey;
 }
-#filters td {
+#filters {
 	table-layout: fixed;
 }
 #filters td:hover, #toggle td:hover{
@@ -457,19 +457,6 @@ form #submit_btn{
 	top: 92.8px;
 }
 #archive{
-	position:absolute;
-	right: 50px;
-	top: 120px;
-	background-color: rgba(255,255,255,0.7);
-	border-radius: 10px;
-	border: 1px solid black;
-}
-#archive:hover{
-	transform: scale(1.05);
-	transition: 0.3s all;
-	background-color: white;
-}
-#archive1{
 	background-color: white;
 	padding:0;
 	height:55px;
