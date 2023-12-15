@@ -129,6 +129,8 @@ def bookings(request):
         Bookings = BookingForm.objects.select_related('car').all()  # get all the bookings from db
         # filter bookings depending on request parameters
         if bool(request.GET.get('employee')):
+            if user.is_superuser:
+                return JsonResponse({'message': 'Доступ заборонено'}, status=401)
             Bookings = Bookings.filter(status__in=['new', 'needs_confirmation', 'acquisition_today', 'returning_today'])
         phone_num = request.GET.get('phone_num')
         car_id = request.GET.get('car_id')
