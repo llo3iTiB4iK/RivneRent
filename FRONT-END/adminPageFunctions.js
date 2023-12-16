@@ -78,6 +78,7 @@ function open_modal(row){
         date_joined_p.hidden = false;
         last_login_p.hidden = false;
         password_p.hidden = true;
+        change_password_p.hidden = true;
         employee_green.hidden = true;
         employee_red.hidden = false;
         employee_red.textContent = "Видалити працівника";
@@ -106,6 +107,7 @@ function open_modal(row){
         date_joined_p.hidden = true;
         last_login_p.hidden = true;
         password_p.hidden = false;
+        change_password_p.hidden = true;
         edit_employee.hidden = true;
         employee_red.textContent = "Скасувати";
         employee_red.onclick = close_modal;
@@ -223,6 +225,11 @@ function make_editable(editable){
  */
 function editEmployee(table_row){
     make_editable(true); // make info editable
+    // change the aside block so that worker's password could be changed
+    date_joined_p.hidden = true;
+    last_login_p.hidden = true;
+    change_password_p.hidden = false;
+    change_password.textContent = "";
     close_button.onclick = function(){ // add confirmation before closing a modal
         if (window.confirm("Всі незбережні зміни будуть незбереженими, закрити вікно?")){
             close_modal();
@@ -238,10 +245,20 @@ function editEmployee(table_row){
     employee_green.hidden = false;
     employee_green.textContent = "Зберегти зміни";
     employee_green.onclick = function (){
-        if (validateEmployeeFields()){ // if all the entered worker's properties pass validation
+        const new_password = change_password.textContent; // get the new password field value
+        const new_password_valid = new_password.length ? (new_password.length <= 100) : true; // the value is valid if field is blank - then password does not change, or if entered value is up to 100 symbols long
+        if (!new_password_valid){ // alert user if new password didn't pass the validation
+            window.alert('Помилка при валідації нового пароля. Допустимим значенням є текстове значення довжиною не більше 100 символів! Якщо ж Ви не хочете змінювати пароль, залиште відповідне поле пустим!');
+        }
+        const validation_result = validateEmployeeFields() && new_password_valid;
+        if (validation_result){ // if all the entered worker's properties pass validation
             const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value; // get the CSRF-token from the corresponding input
             // form the key-value object from worker's info
             let data = {'user_id': employee_id.textContent};
+            // add new password to this object if one was entered and validated
+            if (new_password.length){
+                data['new_password'] = new_password;
+            }
             employee_modal.querySelectorAll("#modal_body>p>span").forEach(span => {
                 data[span.id] = span.textContent;
             })
@@ -256,7 +273,12 @@ function editEmployee(table_row){
             })
             .then(response => { // process server's response
                 if (response.status !== 200){
-                    window.alert('Не вдалося оновити дані працівника. Перезавантажте сторінку або спробуйте пізніше!');
+                    if (response.status === 401){
+                        window.alert('Схоже, Ваш пароль було змінено або закінчилась сесія авторизації! Увійдіть заново!');
+                        window.location.href = 'login.html';
+                    } else {
+                        window.alert('Не вдалося оновити дані працівника. Перезавантажте сторінку або спробуйте пізніше!');
+                    }
                 } else { // if server returned OK, update row with worker whose info was edited, reopen the modal with this worker
                     table_row.cells[1].textContent = `${data.first_name} ${data.last_name}`;
                     table_row.cells[2].textContent = data.username;

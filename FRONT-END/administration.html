@@ -199,7 +199,7 @@
 						{% for worker in workers %}
 						<tr onclick="open_modal(this)">
 							<td>{{ worker.id }}</td>
-							<td>{{ worker.first_name }} {{ worker.last_name }}</td>
+							<td>{{ worker.first_name }} {{ worker.last_name }}{% if forloop.counter == 1 %} (Я){% endif %}</td>
 							<td>{{ worker.username }}</td>
 							<td>{{ worker.email }}</td>
 							<td>{{ worker.date_joined|date:"d-m-Y" }}</td>
@@ -229,6 +229,7 @@
 					<p id="date_joined_p">Дата приєднання:<br><span id='date_joined'></span></p>
 					<p id="last_login_p">Останній вхід:<br><span id='last_login'></span></p>
 					<p id="password_p">Вигадайте надійний пароль:<br><span id="password" class="editable" contenteditable="true"></span></p>
+					<p id="change_password_p">Введіть новий пароль в це поле, якщо бажаєте змінити:<br><span id="change_password" class="editable" contenteditable="true"></span></p>
 				</aside>
 				<p>Ім'я:&nbsp;<span id='first_name'></span></p>
 				<p>Прізвище:&nbsp;<span id='last_name'></span></p>

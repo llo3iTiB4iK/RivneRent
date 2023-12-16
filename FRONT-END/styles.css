@@ -364,6 +364,9 @@ form #submit_btn{
 #bookings thead, #workers thead{
 	font-weight: bold;
 }
+#workers tbody tr:first-child{
+	background-color: lightcyan;
+}
 #bookings td, #workers td{
 	border: 1px solid black;
 	word-wrap: break-word;
@@ -638,7 +641,7 @@ aside {
 	width:80%;
 	display:inline-block;
 }
-#password_p span{
+#password_p span, #change_password_p span{
 	overflow: visible;
 	word-break: break-all;
 	width: 130%;
