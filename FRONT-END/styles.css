@@ -373,14 +373,14 @@ form #submit_btn{
 }
 #bookings_modal{
 	display: none;
-    position: fixed;
-    top: 10%;
-    left: 20%;
-    width: 60%;
-    height: 80%;
-    background-color: rgba(252,246,224,1);
-    z-index: 2;
-    border: 1px solid black;
+	position: fixed;
+	top: 10%;
+	left: 20%;
+	width: 60%;
+	height: 80%;
+	background-color: rgba(252,246,224,1);
+	z-index: 2;
+	border: 1px solid black;
 }
 #employee_modal{
 	position: fixed;
@@ -416,8 +416,8 @@ form #submit_btn{
 	border-bottom: 1px solid black;
 }
 #close_button:hover {
-    background-color: red;
-    cursor: pointer;
+	background-color: red;
+	cursor: pointer;
 }
 .modal_button{
 	background-color: white;
@@ -496,11 +496,11 @@ input[type="checkbox"] {
 	font-weight: bold;	
 }
 aside {
-  width: 25%;
-  padding-left: 0.5rem;
-  margin-left: 0.5rem;
-  float: right;
-  box-shadow: inset 5px 0 5px -5px #29627e;
+	width: 25%;
+	padding-left: 0.5rem;
+	margin-left: 0.5rem;
+	float: right;
+	box-shadow: inset 5px 0 5px -5px #29627e;
 }
 #search_container{
 	position: relative;
@@ -523,7 +523,7 @@ aside {
 	top:3.6px;
 }
 #bookings_list tr, #workers_list tr{
-    cursor: pointer;
+	cursor: pointer;
 }
 #selected_car_img{
 	width: 100%;
