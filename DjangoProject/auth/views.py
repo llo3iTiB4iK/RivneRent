@@ -85,6 +85,10 @@ def manage_users(request):
         user.last_name = data['last_name']
         user.username = data['username']
         user.email = data['email']
+        try:  # if new password was passed in request body, set new password for this user
+            user.set_password(data['new_password'])
+        except KeyError:
+            pass
         user.save()  # save the changes
         return JsonResponse({'message': 'Успішне редагування'})
     elif request.method == 'DELETE':  # process DELETE request
