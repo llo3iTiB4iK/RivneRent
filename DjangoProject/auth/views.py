@@ -1,5 +1,5 @@
 import json
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 from django.contrib.auth import authenticate, login, logout
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
@@ -13,7 +13,10 @@ def check_authentication(request, key=None):
     :return: django.contrib.auth.models.User object if authorization successful else django.http.JsonResponse object with corresponding message
     """
     if not key:  # if key parameter not assigned when calling function
-        key = request.META['HTTP_AUTHORIZATION'].split()[1]  # get token from 'HTTP_AUTHORIZATION' request header
+        try:
+            key = request.META['HTTP_AUTHORIZATION'].split()[1]  # get token from 'HTTP_AUTHORIZATION' request header
+        except KeyError:
+            return HttpResponseForbidden('<h1>Unauthorized</h1>')
     try:
         token = Token.objects.get(key=key)  # get token object from token tokens' db
         user = token.user  # get this token's user
@@ -40,7 +43,7 @@ def login_view(request):
             return JsonResponse({'message': 'Неправильний логін та/або пароль'}, status=401)
     elif request.method == 'GET':  # process GET request
         user = check_authentication(request)  # check authentication using function below
-        if isinstance(user, JsonResponse):  # if function did not return specific user, return error
+        if isinstance(user, (JsonResponse, HttpResponseForbidden)):  # if function did not return specific user, return error
             return user
         # if authorization is ok, return corresponding message and role of the user
         return JsonResponse({'authorized': True, 'role': 'admin' if user.is_superuser else 'employee'})
@@ -60,7 +63,7 @@ def logout_view(request):
 
 def manage_users(request):
     user = check_authentication(request)  # check authentication using function below
-    if isinstance(user, JsonResponse):  # if function did not return specific user, return error
+    if isinstance(user, (JsonResponse, HttpResponseForbidden)):  # if function did not return specific user, return error
         return user
     if request.method == 'POST':  # process POST request
         data = json.loads(request.body)  # create object from json string in request body

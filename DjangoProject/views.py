@@ -6,7 +6,8 @@ from django.shortcuts import render
 from django.utils.timezone import localdate
 from django.forms.models import model_to_dict
 from django.contrib.auth.models import User
-from django.http import HttpResponseForbidden, JsonResponse
+from django.template.exceptions import TemplateDoesNotExist
+from django.http import HttpResponseForbidden, JsonResponse, HttpResponseNotFound
 from auth.views import check_authentication
 
 
@@ -18,7 +19,10 @@ def page_view(request, page=''):
         return render(request, f'{page}.html', {'cars': cars})
     elif page.count('_') >= 3:  # returns rendered page of specific car
         id = page.split('_', 1)[0]  # get id of requested car from url
-        car = Car.objects.get(id=id)  # get car with requested id
+        try:
+            car = Car.objects.get(id=id)  # get car with requested id
+        except:
+            return HttpResponseNotFound('<h1>Page not found</h1>')
         return render(request, 'car.html', {'car': car})
     elif page == 'booking':  # returns rendered page of sending the booking form
         Cars = Car.objects.filter(cannot_be_rented=False).values()  # get available cars as dictionary
@@ -39,11 +43,14 @@ def page_view(request, page=''):
         try:
             user = check_authentication(request, auth_token)  # check if the user is authorized
         except KeyError:
-            return HttpResponseForbidden('Unauthorized')  # if there is no token in url, return error
-        if isinstance(user, JsonResponse):
-            return HttpResponseForbidden('Unauthorized')  # if auth check is failed, return error
+            return HttpResponseForbidden('<h1>Unauthorized</h1>')  # if there is no token in url, return error
+        if isinstance(user, (JsonResponse, HttpResponseForbidden)):
+            return HttpResponseForbidden('<h1>Unauthorized</h1>')  # if auth check is failed, return error
         cars = Car.objects.filter(cannot_be_rented=False)  # get available cars
         workers = User.objects.filter(is_active=True, is_staff=True)  # get current workers
         return render(request, f'{page}.html', {'cars': cars, 'workers': workers, 'localdate': localdate()})
     else:  # returns other pages if they exist
-        return render(request, f'{page}.html')
+        try:
+            return render(request, f'{page}.html')
+        except TemplateDoesNotExist:
+            return HttpResponseNotFound('<h1>Page not found</h1>')

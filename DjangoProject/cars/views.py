@@ -1,5 +1,5 @@
 import json
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
 from cars.models import Car, Prices, Features
 from bookings.models import BookingForm
 from auth.views import check_authentication
@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 def manage_cars(request):
     # check authentication before managing the cars
     user = check_authentication(request)
-    if isinstance(user, JsonResponse):
+    if isinstance(user, (JsonResponse, HttpResponseForbidden)):
         return user
     if request.method == 'POST' and request.POST.get('_method') == 'POST':  # process POST method where _method attribute is also POST
         data = json.loads(request.POST['data'])  # form the object from the json string received

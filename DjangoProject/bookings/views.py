@@ -1,5 +1,5 @@
 import json
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden, HttpResponseNotFound
 from bookings.models import BookingForm
 from cars.models import Car
 from django.utils import timezone
@@ -108,7 +108,10 @@ def make_booking(request):
         except json.JSONDecodeError:  # if json couldn't decode the data correctly
             return JsonResponse({'message': 'Невірний формат даних JSON'}, status=400)
     elif request.method == 'GET':  # process GET request
-        phone_num = request.GET.get('phone_number').replace(' ', '+')  # get the customer's phone number from request
+        try:
+            phone_num = request.GET.get('phone_number').replace(' ', '+')  # get the customer's phone number from request
+        except AttributeError:
+            return HttpResponseNotFound('<h1>Page not found</h1>')
         discount = get_discount(phone_num)  # calculate personal discount for this phone number
         data = {'message': 'Персональна знижка обрахована', 'discount': discount}
         # if the personal discount is 100, calculate the discount if personal discount 100 will be unavailable
@@ -122,7 +125,7 @@ def make_booking(request):
 def bookings(request):
     # check authentication before managing the bookings
     user = check_authentication(request)
-    if isinstance(user, JsonResponse):
+    if isinstance(user, (JsonResponse, HttpResponseForbidden)):
         return user
 
     if request.method == 'GET':  # process GET request
