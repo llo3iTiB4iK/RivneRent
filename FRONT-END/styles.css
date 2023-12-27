@@ -20,7 +20,7 @@ body#about_us_page, body#archive_page, body#admin_page, body#employee_page{
 body#rules_page{
 	background-color: #f1e6c5;
 }
-body#auto_list_page{
+body#auto_list_page, body#car_page{
 	background-image: url("materials/list_bg.jpg");
 }
 header{
