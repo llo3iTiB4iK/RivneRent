@@ -1,4 +1,4 @@
-#!/bin/bash
+!/bin/bash
 
 # Команда для клонування репозиторію
 git clone https://github.com/llo3iTiB4iK/RivneRent
