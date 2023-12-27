@@ -11,15 +11,12 @@ function toggle(event){
     const is_car_page = page_selected.textContent === 'Автомобілі'; // create variable that defines whether the car page was wanted to view
     // hide or show elements whose need to show depends on the page chosen, clear filters
     auto_list.hidden = !is_car_page;
-    if (auto_list.querySelectorAll('li').length === 1){
-        auto_list.hidden = true;
-    }
     add_car.hidden = !is_car_page;
     search.value = "";
     search.placeholder = is_car_page ? "Введіть марку/модель/рік" : "Введіть ім'я/прізвище";
     workers.hidden = is_car_page;
     add_worker.hidden = is_car_page;
-    //
+    // clear filtering
     filter("");
 }
 
@@ -36,6 +33,8 @@ function filter(queryText){
             const to_show = car_title.includes(queryText) || car_title.toLowerCase().includes(queryText);
             car.hidden = !to_show;
         })
+        const new_li = auto_list.querySelectorAll('li')[auto_list.querySelectorAll('li').length-1]; // get hidden new car list item
+        new_li.hidden = true; // make new car list item invisible
     } else { // if user is on the workers' page
         workers.tBodies[0].querySelectorAll('tr').forEach(worker => { // for each worker
             // show or hide worker depending on whether it's name contains entered value
