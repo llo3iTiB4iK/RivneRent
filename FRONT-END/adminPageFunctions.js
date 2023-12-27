@@ -33,7 +33,7 @@ function filter(queryText){
             const to_show = car_title.includes(queryText) || car_title.toLowerCase().includes(queryText);
             car.hidden = !to_show;
         })
-        const new_li = auto_list.querySelectorAll('li')[auto_list.querySelectorAll('li').length-1]; // get hidden new car list item
+        const new_li = auto_list.querySelectorAll('li')[auto_list.querySelectorAll('li').length-1]; // get new car list item
         new_li.hidden = true; // make new car list item invisible
     } else { // if user is on the workers' page
         workers.tBodies[0].querySelectorAll('tr').forEach(worker => { // for each worker
